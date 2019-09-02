@@ -3,7 +3,6 @@ package com.birthday.ui.birthdayFeed
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -18,13 +17,17 @@ import kotlinx.android.synthetic.main.birthdayfeed_fragment.toolbar
 import java.util.Calendar
 import javax.inject.Inject
 import android.text.format.DateFormat
+import com.birthday.common.ui.ItemDivider
+import com.birthday.ui.fragment.BaseNavigationFragment
+import com.birthday.ui.fragment.BirthdayDetailsFragment
+import io.reactivex.disposables.CompositeDisposable
 
 private const val PAGE_LOADING_STATE = 0
 private const val PAGE_ERROR_STATE = 1
 private const val PAGE_CONTENT_STATE = 2
 private const val DIALOG_PICKER = 100
 
-class BirthdayFeedFragment : Fragment() {
+class BirthdayFeedFragment : BaseNavigationFragment() {
 
   private val settingDrawable by lazy { resources.getDrawable(R.drawable.ic_settings_black_24dp, null) }
 
@@ -34,6 +37,8 @@ class BirthdayFeedFragment : Fragment() {
   lateinit var viewModelFactory: BirthdayViewModelFactory
 
   private val viewModel by lazy { viewModelFactory.getInstance(this) }
+
+  private val disposable by lazy { CompositeDisposable() }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -58,26 +63,28 @@ class BirthdayFeedFragment : Fragment() {
       addItemDecoration(ItemDivider(requireContext()))
     }
 
-    viewModel.state()
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribe {
-        when (it) {
-          is BirthdayListUpdate.Loading -> {
-            infoContainer.displayedChild = PAGE_LOADING_STATE
-          }
-          is BirthdayListUpdate.Error -> {
-            infoContainer.displayedChild = PAGE_ERROR_STATE
-          }
-          is BirthdayListUpdate.Content -> {
-            val bInfoModelList = ArrayList<BirthdayInfoModel>()
-            it.list?.forEach {
-              bInfoModelList.add(transform(it))
+    disposable.add(
+      viewModel.state()
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+          when (it) {
+            is BirthdayListUpdate.Loading -> {
+              infoContainer.displayedChild = PAGE_LOADING_STATE
             }
-            birthdayController.setData(bInfoModelList)
-            infoContainer.displayedChild = PAGE_CONTENT_STATE
+            is BirthdayListUpdate.Error -> {
+              infoContainer.displayedChild = PAGE_ERROR_STATE
+            }
+            is BirthdayListUpdate.Content -> {
+              val bInfoModelList = ArrayList<BirthdayInfoModel>()
+              it.list?.forEach {
+                bInfoModelList.add(transform(it))
+              }
+              birthdayController.setData(bInfoModelList)
+              infoContainer.displayedChild = PAGE_CONTENT_STATE
+            }
           }
         }
-      }
+    )
 
     requestContent()
   }
@@ -95,12 +102,18 @@ class BirthdayFeedFragment : Fragment() {
     val yearInMilli = daysInMilli * 365
     val remainingDays = (difference / daysInMilli) / 1000  //TODO fix it
     val profileDetail: String = getString(
-      R.string.birthdayDetail, difference / yearInMilli,
+      R.string.birthdayDetail, (difference / yearInMilli) + 1,
       DateFormat.format("dd", dob) as String,
       DateFormat.format("MMM", dob) as String
     )
     val remainingDay = getString(R.string.remainingday, remainingDays)
-    return BirthdayInfoModel(imagePath, profileName, profileDetail, remainingDay)
+    return BirthdayInfoModel(
+      imagePath,
+      profileName,
+      profileDetail,
+      remainingDay,
+      ::BDPLauncher
+    )
   }
 
   private fun requestContent() {
@@ -129,6 +142,17 @@ class BirthdayFeedFragment : Fragment() {
         requestContent()
       }
     }
+  }
+
+  fun BDPLauncher(){
+    navigationManagerHolder.getNavigationFragmentManager().let {
+      it.safeAddBackStack(BirthdayDetailsFragment.newInstance())
+    }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    disposable.dispose()
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {

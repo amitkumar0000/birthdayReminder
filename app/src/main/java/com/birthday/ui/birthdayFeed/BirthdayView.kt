@@ -1,21 +1,20 @@
 package com.birthday.ui.birthdayFeed
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.constraintlayout.widget.Group
+import androidx.fragment.app.FragmentManager
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.birthday.ui.R
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.birthday_add_fragment.profile_image
-import java.io.File
-import java.io.IOException
+import com.jakewharton.rxbinding.view.RxView
+import io.reactivex.Observable
+
 
 @EpoxyModelClass(layout = R.layout.birthday_info_row)
 abstract class BirthdayView : EpoxyModelWithHolder<BirthdayViewHolder>() {
@@ -28,11 +27,17 @@ abstract class BirthdayView : EpoxyModelWithHolder<BirthdayViewHolder>() {
   lateinit var profileDetails: String
   @EpoxyAttribute
   lateinit var remainingDate: String
+  @EpoxyAttribute
+  lateinit var launchBDP: ()->Unit
+
 
   override fun bind(holder: BirthdayViewHolder?) {
     super.bind(holder)
     holder?.profileImage?.let {
       Glide.with(it.context).load(imagepath).into(it)
+      it.setOnClickListener {
+        launchBDP()
+      }
     }
     holder?.profileName?.text = profileName
     holder?.profiledetail?.text = profileDetails
@@ -46,11 +51,13 @@ class BirthdayViewHolder : EpoxyHolder() {
   lateinit var profileName: TextView
   lateinit var profiledetail: TextView
   lateinit var remainingDate: TextView
+  lateinit var imageView: ImageView
 
   override fun bindView(itemView: View) {
     profileImage = itemView.findViewById(R.id.profile_image)
     profileName = itemView.findViewById(R.id.profile_name)
     profiledetail = itemView.findViewById(R.id.profile_birth_details)
     remainingDate = itemView.findViewById(R.id.remaining_date)
+    imageView = itemView.findViewById(R.id.imageView)
   }
 }

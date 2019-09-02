@@ -7,7 +7,7 @@ class BirthDayActivity() : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    navigationFragmentManager.addAsBaseFragment(BirthdayFeedFragment.newInstance())
+    navFragmentManager.addAsBaseFragment(BirthdayFeedFragment.newInstance())
   }
 
 

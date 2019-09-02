@@ -1,4 +1,4 @@
-package com.birthday.ui.birthdayFeed
+package com.birthday.common.ui
 
 import androidx.recyclerview.widget.RecyclerView
 import android.content.Context

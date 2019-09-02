@@ -18,4 +18,11 @@ class NavigationFragmentManager(private val containerId:Int, private val fragmen
   private fun getDefaultFragmentTag(fragment: Fragment) =
     (fragment as Object).javaClass.name
 
+  fun safeAddBackStack(fragment: Fragment) {
+    fragmentManager.beginTransaction()
+      .replace(containerId, fragment, getDefaultFragmentTag(fragment))
+      .addToBackStack(null)
+      .commit()
+
+  }
 }
