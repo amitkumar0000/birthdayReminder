@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/white"
+  tools:context=".birthdayFeedFragment.BirthdayFeedFragment">
+
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:minHeight="?attr/actionBarSize"
+    android:theme="@style/ToolBarStyle"
+    app:layout_constraintBottom_toTopOf="@+id/birthdaytitle"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <androidx.appcompat.widget.AppCompatTextView
+    android:id="@+id/birthdaytitle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/titlemarginStart"
+    android:alpha="0.8"
+    android:text="@string/birthdayTitle"
+    android:textColor="@color/blue"
+    android:textSize="@dimen/dim_12x"
+    android:textStyle="bold"
+    app:layout_constraintBottom_toTopOf="@+id/searchView"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+  <androidx.appcompat.widget.SearchView
+    android:id="@+id/searchView"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/searchViewHeight"
+    android:layout_margin="@dimen/searchMargin"
+    android:background="@drawable/bg_white_rounded"
+    app:layout_constraintBottom_toTopOf="@id/birthday_container"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/birthdaytitle" />
+
+  <ViewFlipper
+    android:id="@+id/birthday_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/containerMargin"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/searchView">
+
+    <!--Loading -->
+    <com.airbnb.lottie.LottieAnimationView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:lottie_autoPlay="true"
+      app:lottie_fileName="lottie/birthday/7991-fixed-scheduling.json"
+      app:lottie_loop="true" />
+
+    <!--Error -->
+    <com.airbnb.lottie.LottieAnimationView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:lottie_autoPlay="true"
+      app:lottie_fileName="lottie/birthday/error.json"
+      app:lottie_loop="true" />
+
+    <!--Content-->
+    <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/birthday_info_list"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+  </ViewFlipper>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

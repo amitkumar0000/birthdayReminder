@@ -1,0 +1,7 @@
+<resources>
+  <string name="app_name">Birthday</string>
+  <string name="birthdayTitle">Birthdays</string>
+  <string name="birthdayDetail">Turns %d on %s %s</string>
+  <string name="remainingday">%ddays</string>
+
+</resources>

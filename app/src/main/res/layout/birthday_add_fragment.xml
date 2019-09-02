@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:mask="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="400dp"
+  android:layout_height="400dp"
+  android:layout_gravity="center"
+  tools:context=".birthdayFeedFragment.BirthdayAddFragment">
+
+  <de.hdodenhof.circleimageview.CircleImageView
+    android:id="@+id/profile_image"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="48dp"
+    android:src="@drawable/ic_add_a_photo"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.415"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+
+  <androidx.appcompat.widget.AppCompatTextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="28dp"
+    android:text="Name"
+    android:textSize="24sp"
+    android:textStyle="bold"
+    app:layout_constraintBottom_toTopOf="@+id/textView2"
+    app:layout_constraintEnd_toStartOf="@+id/nameInput"
+    app:layout_constraintHorizontal_bias="0.2"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <androidx.appcompat.widget.AppCompatEditText
+    android:id="@+id/nameInput"
+    android:layout_width="252dp"
+    android:layout_height="44dp"
+    android:layout_marginTop="36dp"
+    android:layout_marginEnd="12dp"
+    android:alpha="0.5"
+    android:maxLines="1"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
+  <androidx.appcompat.widget.AppCompatTextView
+    android:id="@+id/textView2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginBottom="108dp"
+    android:text="DOB"
+    android:textSize="24sp"
+    android:textStyle="bold"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <br.com.sapereaude.maskedEditText.MaskedEditText
+    android:id="@+id/dob_input"
+    android:layout_width="123dp"
+    android:layout_height="42dp"
+    android:layout_marginStart="76dp"
+    android:layout_marginTop="24dp"
+    android:layout_marginEnd="8dp"
+    android:hint="DDMMYYYY"
+    android:inputType="date"
+    android:typeface="monospace"
+    android:alpha="0.5"
+    app:keep_hint="true"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toEndOf="@+id/textView2"
+    app:layout_constraintTop_toBottomOf="@+id/nameInput"
+    mask:allowed_chars="1234567890"
+    mask:mask="##/##/####" />
+
+  <androidx.appcompat.widget.AppCompatButton
+    android:id="@+id/addDone"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="48dp"
+    android:text="Done"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/dob_input"
+    app:layout_constraintVertical_bias="1.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

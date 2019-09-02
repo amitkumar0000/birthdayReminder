@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="dim_2x">4dp</dimen>
+  <dimen name="dim_8x">32sp</dimen>
+  <dimen name="dim_10x">40</dimen>
+  <dimen name="dim_12x">48sp</dimen>
+  <dimen name="titlemarginStart">20dp</dimen>
+  <dimen name="searchMargin">20dp</dimen>
+  <dimen name="searchViewHeight">50dp</dimen>
+  <dimen name="containerMargin">20dp</dimen>
+</resources>
