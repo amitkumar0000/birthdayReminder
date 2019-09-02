@@ -28,7 +28,7 @@ abstract class BirthdayView : EpoxyModelWithHolder<BirthdayViewHolder>() {
   @EpoxyAttribute
   lateinit var remainingDate: String
   @EpoxyAttribute
-  lateinit var launchBDP: ()->Unit
+  lateinit var launchBDP: (String,String,String)->Unit
 
 
   override fun bind(holder: BirthdayViewHolder?) {
@@ -36,7 +36,7 @@ abstract class BirthdayView : EpoxyModelWithHolder<BirthdayViewHolder>() {
     holder?.profileImage?.let {
       Glide.with(it.context).load(imagepath).into(it)
       it.setOnClickListener {
-        launchBDP()
+        launchBDP(imagepath,profileName,profileDetails)
       }
     }
     holder?.profileName?.text = profileName

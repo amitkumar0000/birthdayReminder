@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.birthdayfeed_fragment.toolbar
 import java.util.Calendar
 import javax.inject.Inject
 import android.text.format.DateFormat
+import com.birthday.common.Utility
 import com.birthday.common.ui.ItemDivider
 import com.birthday.ui.fragment.BaseNavigationFragment
 import com.birthday.ui.fragment.BirthdayDetailsFragment
@@ -112,7 +113,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
       profileName,
       profileDetail,
       remainingDay,
-      ::BDPLauncher
+      ::bdpLauncher
     )
   }
 
@@ -144,9 +145,15 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     }
   }
 
-  fun BDPLauncher(){
+  private fun bdpLauncher(imagePath:String,name:String,dob:String){
+    val fragment = BirthdayDetailsFragment.newInstance()
+    var bundle = Bundle()
+    bundle.putString(Utility.IMAGE_PATH,imagePath)
+    bundle.putString(Utility.NAME,name)
+    bundle.putString(Utility.DOB,dob)
+    fragment.arguments = bundle
     navigationManagerHolder.getNavigationFragmentManager().let {
-      it.safeAddBackStack(BirthdayDetailsFragment.newInstance())
+      it.safeAddBackStack(fragment)
     }
   }
 

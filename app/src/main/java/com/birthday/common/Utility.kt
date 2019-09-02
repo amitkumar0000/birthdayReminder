@@ -9,6 +9,9 @@ import androidx.fragment.app.Fragment
 
 object Utility {
   const val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123
+  const val IMAGE_PATH  = "image_path"
+  const val NAME = "name"
+  const val DOB = "dob"
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   fun checkPermission(fragment: Fragment): Boolean {
     if ( Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {

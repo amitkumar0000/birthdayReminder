@@ -7,5 +7,5 @@ data class BirthdayInfoModel(
   val profileName: String,
   val profileDetail: String,
   val remainingDate: String,
-  val launchFunction: () -> Unit
+  val launchFunction: (String,String,String) -> Unit
 )

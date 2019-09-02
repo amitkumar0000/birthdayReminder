@@ -5,5 +5,7 @@
   <color name="colorAccent">#D81B60</color>
   <color name="dark_gray">#9E9E9E</color>
   <color name="light_gray">#E0E0E0</color>
+  <color name="light_gray_holo">#FAFAFA</color>
   <color name="blue">#0D47A1</color>
+  <color name="blue_light">#64B5F6</color>
 </resources>

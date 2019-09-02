@@ -6,7 +6,7 @@
   android:layout_width="400dp"
   android:layout_height="400dp"
   android:layout_gravity="center"
-  tools:context=".birthdayFeedFragment.BirthdayAddFragment">
+  >
 
   <de.hdodenhof.circleimageview.CircleImageView
     android:id="@+id/profile_image"
