@@ -13,5 +13,9 @@
     <item name="android:actionMenuTextColor">@color/menutextcolor</item>
   </style>
 
+  <style name="shareStyle">
+
+  </style>
+
   <color name="menutextcolor">#757575</color>
 </resources>
