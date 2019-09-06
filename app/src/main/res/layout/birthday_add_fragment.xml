@@ -67,6 +67,7 @@
     android:layout_marginEnd="8dp"
     android:hint="DDMMYYYY"
     android:inputType="date"
+    android:text=""
     android:typeface="monospace"
     android:alpha="0.5"
     app:keep_hint="true"

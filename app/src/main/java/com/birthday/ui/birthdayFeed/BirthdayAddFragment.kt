@@ -33,12 +33,14 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
+import java.util.Date
 import javax.inject.Inject
 
 private const val REQUEST_CAMERA = 1
 private const val SELECT_FILE = 2
 private var userChoosenTask: String = ""
 private var imagePath: String = ""
+private const val RECEIPT_REGEX = "\\d{4}-\\d{4}-\\d{4}-\\d{4}-\\d"
 
 class BirthdayAddFragment : DialogFragment()
   , ActivityCompat.OnRequestPermissionsResultCallback {
@@ -64,9 +66,18 @@ class BirthdayAddFragment : DialogFragment()
     super.onViewCreated(view, savedInstanceState)
 
     addDone.setOnClickListener {
-      val profileName = nameInput.text.toString()
-      val dob = SimpleDateFormat("dd/MM/yyyy").parse(dob_input.text.toString())
-      viewModel.saveContent(BirthdayList(name = profileName, dob = dob, imagePath = imagePath))
+      val profileName = nameInput.text?.toString()
+      var dob: Date? = null
+
+      if (dob_input.text?.toString()?.matches(Regex(".*[dmyDMY].*")) == false) {
+        dob = SimpleDateFormat("dd/MM/yyyy").parse(dob_input.text.toString())
+      }
+      if (!profileName.isNullOrEmpty() && !imagePath.isNullOrEmpty() && dob != null) {
+        viewModel.saveContent(BirthdayList(name = profileName, dob = dob, imagePath = imagePath))
+      } else {
+        dialog.dismiss()
+        Toast.makeText(requireContext(),getString(R.string.notSaved),Toast.LENGTH_SHORT).show()
+      }
     }
 
     viewModel.state()
@@ -135,13 +146,14 @@ class BirthdayAddFragment : DialogFragment()
     var bm: Bitmap? = null
     if (data != null) {
       try {
-        val uri=data.data
+        val uri = data.data
         bm = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri)
-        saveImageToInternalStorage(bm,nameInput.text.toString()+System.currentTimeMillis())
+        saveImageToInternalStorage(bm, nameInput.text.toString() + System.currentTimeMillis())
       } catch (e: IOException) {
         e.printStackTrace()
       }
-    } }
+    }
+  }
 
   private fun saveImageToInternalStorage(bm: Bitmap, fileName: String) {
     ImageStorageManager.saveToInternalStorage(requireContext(), bm, fileName)
