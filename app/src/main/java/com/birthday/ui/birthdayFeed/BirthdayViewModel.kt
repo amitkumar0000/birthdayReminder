@@ -34,4 +34,12 @@ class BirthdayViewModel(val birthdayInteractor: BirthdayInteractor) : ViewModel(
         state.onNext(BirthdayListUpdate.InsertSuccess)
       }
   }
+
+  fun deleteContent(id: Long) {
+    birthdayInteractor.deleteId(id)
+      .subscribeOn(Schedulers.io())
+      .subscribe{
+        state.onNext(BirthdayListUpdate.deleteSuccess)
+      }
+  }
 }

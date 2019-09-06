@@ -13,6 +13,7 @@
   <string name="share">Share</string>
   <string name="facebook_app_id">2820402044655584</string>
   <string name="fb_login_protocol_scheme">fb2820402044655584</string>
+  <string name="happybday">Wish you many many happy bday %s</string>
 
 
 </resources>

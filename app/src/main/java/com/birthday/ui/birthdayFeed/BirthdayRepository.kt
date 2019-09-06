@@ -16,7 +16,9 @@ class BirthdayRepository @Inject constructor(val manager: BirthdayListManager) :
     }
   }
 
-  override fun deleteItem(): Completable {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  override fun deleteItem(id:Long): Completable {
+    return Completable.fromAction {
+      manager.deleteItem(id)
+    }
   }
 }

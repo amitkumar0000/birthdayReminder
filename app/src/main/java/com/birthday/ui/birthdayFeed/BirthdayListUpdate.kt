@@ -4,6 +4,7 @@ sealed class BirthdayListUpdate {
   object Loading : BirthdayListUpdate()
   object Error : BirthdayListUpdate()
   object InsertSuccess : BirthdayListUpdate()
+  object deleteSuccess : BirthdayListUpdate()
   data class Content(val list: List<BirthdayList>) : BirthdayListUpdate()
 }
 

@@ -6,5 +6,5 @@ import io.reactivex.Single
 interface  DatabaseRepository {
   fun getAllItem(): Single<List<BirthdayList>>
   fun insertItem(item:BirthdayList): Completable
-  fun deleteItem(): Completable
+  fun deleteItem(id:Long): Completable
 }

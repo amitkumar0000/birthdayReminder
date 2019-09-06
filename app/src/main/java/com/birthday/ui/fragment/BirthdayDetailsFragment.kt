@@ -57,7 +57,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       findViewById<TextView>(R.id.share_text).text = getString(R.string.text)
       findViewById<CircleImageView>(R.id.share_image_container).apply {
         setImageDrawable(text)
-        setBackgroundColor(getColor(requireContext(), android.R.color.holo_green_light))
+        circleBackgroundColor = getColor(requireContext(), android.R.color.holo_green_light)
       }
       setOnClickListener {
         startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_APP_MESSAGING))
@@ -67,7 +67,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
     sharelayout.get(1).apply {
       findViewById<TextView>(R.id.share_text).text = getString(R.string.call)
       findViewById<CircleImageView>(R.id.share_image_container).apply {
-        setBackgroundColor(getColor(requireContext(), R.color.blue_light))
+        circleBackgroundColor = getColor(requireContext(), R.color.blue_light)
         setImageDrawable(call)
       }
       setOnClickListener {
@@ -79,7 +79,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       findViewById<TextView>(R.id.share_text).text = getString(R.string.email)
       findViewById<CircleImageView>(R.id.share_image_container).apply {
         setImageDrawable(email)
-        setBackgroundColor(getColor(requireContext(), android.R.color.holo_red_dark))
+        circleBackgroundColor = getColor(requireContext(), android.R.color.holo_red_dark)
         alpha = 0.6F
       }
       setOnClickListener {
@@ -91,14 +91,14 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       findViewById<TextView>(R.id.share_text).text = getString(R.string.share)
       findViewById<CircleImageView>(R.id.share_image_container).apply {
         setImageDrawable(share)
-        setBackgroundColor(getColor(requireContext(), android.R.color.holo_blue_dark))
+        circleBackgroundColor = getColor(requireContext(), android.R.color.holo_blue_dark)
 
       }
       setOnClickListener {
 
         val sendIntent: Intent = Intent().apply {
           action = Intent.ACTION_SEND
-          putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+          putExtra(Intent.EXTRA_TEXT, getString(R.string.happybday,profileName.text.toString()))
           type = "text/plain"
         }
 

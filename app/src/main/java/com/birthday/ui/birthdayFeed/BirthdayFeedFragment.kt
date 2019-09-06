@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.birthdayfeed_fragment.toolbar
 import java.util.Calendar
 import javax.inject.Inject
 import android.text.format.DateFormat
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.birthday.common.Utility
 import com.birthday.common.ui.ItemDivider
 import com.birthday.ui.fragment.BaseNavigationFragment
@@ -82,6 +84,8 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
       addItemDecoration(ItemDivider(requireContext()))
     }
 
+    setupSwipeToDelete()
+
     disposable.add(
       viewModel.state()
         .observeOn(AndroidSchedulers.mainThread())
@@ -104,11 +108,35 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
             is BirthdayListUpdate.InsertSuccess -> {
               requestContent()
             }
+            is BirthdayListUpdate.deleteSuccess ->{
+              requestContent()
+            }
           }
         }
     )
 
     requestContent()
+  }
+
+  private fun setupSwipeToDelete() {
+    var itemTouchHelperCallback = object:  ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
+      override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+      ): Boolean {
+        Timber.d("Item onMove")
+        return true
+      }
+
+      override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        val content = birthdayController.currentData?.get(viewHolder.adapterPosition)
+
+        Timber.d("Item Swiped ")
+        content?.let {  viewModel.deleteContent(it.id) }
+      }
+    }
+    ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(birthdayList)
   }
 
   private fun setupFBlogin() {
@@ -187,6 +215,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     )
     val remainingDay = getString(R.string.remainingday, totalRem)
     return BirthdayInfoModel(
+      it.id,
       imagePath,
       profileName,
       profileDetail,

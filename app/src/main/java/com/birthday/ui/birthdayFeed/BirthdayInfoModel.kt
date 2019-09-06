@@ -1,9 +1,9 @@
 package com.birthday.ui.birthdayFeed
 
 import java.util.Date
-import kotlin.reflect.KFunction0
 
 data class BirthdayInfoModel(
+  val id:Long,
   val imagePath: String,
   val profileName: String,
   val profileDetail: String,

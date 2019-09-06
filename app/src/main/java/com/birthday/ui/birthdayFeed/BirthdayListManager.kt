@@ -11,4 +11,9 @@ class BirthdayListManager(private val database: BirthdayDatabase) {
   fun insertInfo(item: BirthdayList): Long {
     return database.birthdayDao().insert(item)
   }
+
+  fun deleteItem(id: Long): Int {
+    return database.birthdayDao().delete(id)
+
+  }
 }

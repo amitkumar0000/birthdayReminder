@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.FragmentManager
 import com.airbnb.epoxy.EpoxyAttribute
@@ -35,11 +36,11 @@ abstract class BirthdayView : EpoxyModelWithHolder<BirthdayViewHolder>() {
 
   override fun bind(holder: BirthdayViewHolder?) {
     super.bind(holder)
+    holder?.rowContainer?.setOnClickListener{
+             launchBDP(imagepath,profileName,profileDetails,dob)
+    }
     holder?.profileImage?.let {
       Glide.with(it.context).load(imagepath).into(it)
-      it.setOnClickListener {
-        launchBDP(imagepath,profileName,profileDetails,dob)
-      }
     }
     holder?.profileName?.text = profileName
     holder?.profiledetail?.text = profileDetails
@@ -54,6 +55,7 @@ class BirthdayViewHolder : EpoxyHolder() {
   lateinit var profiledetail: TextView
   lateinit var remainingDate: TextView
   lateinit var imageView: ImageView
+  lateinit var rowContainer: ConstraintLayout
 
   override fun bindView(itemView: View) {
     profileImage = itemView.findViewById(R.id.profile_image)
@@ -61,5 +63,6 @@ class BirthdayViewHolder : EpoxyHolder() {
     profiledetail = itemView.findViewById(R.id.profile_birth_details)
     remainingDate = itemView.findViewById(R.id.remaining_date)
     imageView = itemView.findViewById(R.id.imageView)
+    rowContainer = itemView.findViewById(R.id.row_container)
   }
 }

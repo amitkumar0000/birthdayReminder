@@ -1,6 +1,7 @@
 package com.birthday.ui.birthdayFeed
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,4 +17,7 @@ interface BirthdayDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insert(birthdayList: BirthdayList): Long
+
+  @Query("Delete from BirthdayList where id is :itemId" )
+  fun delete(itemId:Long): Int
 }

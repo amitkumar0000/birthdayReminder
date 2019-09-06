@@ -15,4 +15,9 @@ class BirthdayInteractor @Inject constructor(
   fun saveContent(info: BirthdayList) : Completable{
      return birthdayRepository.insertItem(info)
   }
+
+  fun deleteId(id: Long): Completable {
+    return birthdayRepository.deleteItem(id)
+
+  }
 }
