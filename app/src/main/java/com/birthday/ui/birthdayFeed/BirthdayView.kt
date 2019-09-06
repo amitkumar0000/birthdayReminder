@@ -14,7 +14,7 @@ import com.birthday.ui.R
 import com.bumptech.glide.Glide
 import com.jakewharton.rxbinding.view.RxView
 import io.reactivex.Observable
-
+import java.util.Date
 
 @EpoxyModelClass(layout = R.layout.birthday_info_row)
 abstract class BirthdayView : EpoxyModelWithHolder<BirthdayViewHolder>() {
@@ -28,7 +28,9 @@ abstract class BirthdayView : EpoxyModelWithHolder<BirthdayViewHolder>() {
   @EpoxyAttribute
   lateinit var remainingDate: String
   @EpoxyAttribute
-  lateinit var launchBDP: (String,String,String)->Unit
+  lateinit var dob: Date
+  @EpoxyAttribute
+  lateinit var launchBDP: (String,String,String,Date)->Unit
 
 
   override fun bind(holder: BirthdayViewHolder?) {
@@ -36,7 +38,7 @@ abstract class BirthdayView : EpoxyModelWithHolder<BirthdayViewHolder>() {
     holder?.profileImage?.let {
       Glide.with(it.context).load(imagepath).into(it)
       it.setOnClickListener {
-        launchBDP(imagepath,profileName,profileDetails)
+        launchBDP(imagepath,profileName,profileDetails,dob)
       }
     }
     holder?.profileName?.text = profileName

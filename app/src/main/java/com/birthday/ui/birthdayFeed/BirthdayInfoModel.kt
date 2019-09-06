@@ -1,5 +1,6 @@
 package com.birthday.ui.birthdayFeed
 
+import java.util.Date
 import kotlin.reflect.KFunction0
 
 data class BirthdayInfoModel(
@@ -7,5 +8,6 @@ data class BirthdayInfoModel(
   val profileName: String,
   val profileDetail: String,
   val remainingDate: String,
-  val launchFunction: (String,String,String) -> Unit
+  val dob: Date,
+  val launchFunction: (String,String,String,Date) -> Unit
 )

@@ -3,17 +3,13 @@ package com.birthday.ui.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.get
 import com.birthday.common.Utility
-
 import com.birthday.ui.R
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
@@ -21,15 +17,8 @@ import kotlinx.android.synthetic.main.birthday_profile_layout.bdpToolbar
 import kotlinx.android.synthetic.main.birthday_profile_layout.profileDob
 import kotlinx.android.synthetic.main.birthday_profile_layout.profileImage
 import kotlinx.android.synthetic.main.birthday_profile_layout.profileName
-import kotlinx.android.synthetic.main.birthday_share_layout.callShareId
-import kotlinx.android.synthetic.main.birthday_share_layout.emailShareId
-import kotlinx.android.synthetic.main.birthday_share_layout.shareId
 import kotlinx.android.synthetic.main.birthday_share_layout.sharelayout
-import kotlinx.android.synthetic.main.share_layout.share_text
-import androidx.core.content.ContextCompat.startActivity
 import android.content.pm.ResolveInfo
-import android.content.pm.PackageManager
-import android.app.Activity
 
 class BirthdayDetailsFragment : BaseNavigationFragment() {
 

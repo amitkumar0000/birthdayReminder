@@ -21,12 +21,26 @@ import com.birthday.common.Utility
 import com.birthday.common.ui.ItemDivider
 import com.birthday.ui.fragment.BaseNavigationFragment
 import com.birthday.ui.fragment.BirthdayDetailsFragment
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginResult
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.birthdayfeed_fragment.login_button as loginButton
+import java.util.Arrays
+import com.facebook.AccessToken
+import com.facebook.GraphRequest
+import timber.log.Timber
+import com.facebook.Profile
+import com.facebook.internal.ImageRequest
+import java.text.SimpleDateFormat
+import java.util.Date
 
 private const val PAGE_LOADING_STATE = 0
 private const val PAGE_ERROR_STATE = 1
 private const val PAGE_CONTENT_STATE = 2
 private const val DIALOG_PICKER = 100
+private const val EMAIL = "email"
 
 class BirthdayFeedFragment : BaseNavigationFragment() {
 
@@ -40,6 +54,8 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
   private val viewModel by lazy { viewModelFactory.getInstance(this) }
 
   private val disposable by lazy { CompositeDisposable() }
+
+  private val callbackManager by lazy { CallbackManager.Factory.create() }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -55,6 +71,8 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+
+//    setupFBlogin()
 
     setupToolbar()
 
@@ -83,6 +101,9 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
               birthdayController.setData(bInfoModelList)
               infoContainer.displayedChild = PAGE_CONTENT_STATE
             }
+            is BirthdayListUpdate.InsertSuccess -> {
+              requestContent()
+            }
           }
         }
     )
@@ -90,32 +111,127 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     requestContent()
   }
 
+  private fun setupFBlogin() {
+    loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday", "user_friends"))
+
+    loginButton.fragment = this
+
+    loginButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+      override fun onSuccess(result: LoginResult?) {
+        Timber.d("FB Login Success")
+        result?.let {
+          getFacebookContent(it)
+        }
+      }
+
+      override fun onCancel() {
+        Timber.d("FB Login onCancel")
+      }
+
+      override fun onError(error: FacebookException?) {
+        Timber.d("FB Login onError")
+      }
+    })
+  }
+
+  private fun getFacebookContent(loginResult: LoginResult) {
+    val request = GraphRequest.newMeRequest(
+      loginResult.accessToken
+    ) { `jsonObject`,
+      response ->
+      run {
+
+        Timber.d(" Response $jsonObject  $response")
+        viewModel.saveContent(
+          BirthdayList(
+            name = jsonObject.getString("first_name") + " " + jsonObject.getString("last_name"),
+            dob = Date(jsonObject.getString("birthday")),
+            imagePath = ImageRequest.getProfilePictureUri(Profile.getCurrentProfile().id, 100, 100).toString()
+          )
+        )
+      }
+    }
+    val parameters = Bundle();
+    parameters.putString("fields", "id,email,first_name,last_name,birthday,friends");
+    request.parameters = parameters;
+    request.executeAsync();
+  }
+
   private fun transform(it: BirthdayList): BirthdayInfoModel {
     val imagePath = it.imagePath
     val profileName = it.name
-    val dob = it.dob
+    val dob:Date = it.dob
 
-    val difference = Calendar.getInstance().time.time - dob.time
-    val secondsInMilli: Long = 1000
-    val minutesInMilli = secondsInMilli * 60
-    val hoursInMilli = minutesInMilli * 60
-    val daysInMilli = hoursInMilli * 24
-    val yearInMilli = daysInMilli * 365
-    val remainingDays = (difference / daysInMilli) / 1000  //TODO fix it
+
+    val ct = Calendar.getInstance().time
+
+    val monthRem = (ct.month - dob.month)
+
+    val dayRem = ct.date - dob.date
+
+    val additionalDay = additionalDay(ct.year,ct.month,dob.month)
+
+
+    val totalRem = Math.abs(dayRem) + Math.abs(monthRem*30)+additionalDay
+
+    var age = ct.year - dob.year
+
+    if(monthRem>0 || (monthRem==0 && dayRem>0)){
+      age += 1
+    }
+
     val profileDetail: String = getString(
-      R.string.birthdayDetail, (difference / yearInMilli) + 1,
+      R.string.birthdayDetail, age,
       DateFormat.format("dd", dob) as String,
       DateFormat.format("MMM", dob) as String
     )
-    val remainingDay = getString(R.string.remainingday, remainingDays)
+    val remainingDay = getString(R.string.remainingday, totalRem)
     return BirthdayInfoModel(
       imagePath,
       profileName,
       profileDetail,
       remainingDay,
+      it.dob,
       ::bdpLauncher
     )
   }
+
+  private val lookup = mapOf<Int,Int>(1 to 1,2 to -1,3 to 1,4 to 0,5 to 1,6 to 0,7 to 1,8 to 1,9 to 0,10 to 1, 11 to 0,12 to 1)
+
+  private fun additionalDay(year:Int, cMn: Int, bMon: Int): Int {
+    var aD= 0
+    var cMon = cMn
+    while (cMon!= bMon){
+      if(cMon == 2){
+        if((cMon>bMon && isleap(year+1)) || isleap(year)){
+          aD -= 1
+        }else{
+          aD -= 2
+        }
+        cMon = (cMon+1)%12
+        if(cMon == 0) cMon = 12
+        continue
+      }
+      aD += lookup.get(cMon)!!
+      cMon = (cMon+1)%12
+      if(cMon == 0) cMon = 12
+    }
+    return  aD
+  }
+
+  private fun isleap(year:Int):Boolean{
+    // then it is a leap year
+    if (year % 400 == 0 || year % 4 == 0)
+      return true;
+
+    // Else If a year is muliplt of 100,
+    // then it is not a leap year
+    if (year % 100 == 0)
+      return false;
+    return false;
+  }
+
+
 
   private fun requestContent() {
     viewModel.loadContent()
@@ -125,7 +241,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     toolbar.apply {
       navigationIcon = settingDrawable
       setNavigationOnClickListener {
-        Log.d("TAG", " Setting clikced")
+        syncFacebookContent()
       }
       menu.clear()
       inflateMenu(R.menu.birthday_menu)
@@ -136,7 +252,13 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     }
   }
 
+  private fun syncFacebookContent() {
+    val accessToken = AccessToken.getCurrentAccessToken()
+    val isLoggedIn = accessToken != null && !accessToken.isExpired
+  }
+
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    callbackManager.onActivityResult(requestCode, resultCode, data);
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
       DIALOG_PICKER -> {
@@ -145,12 +267,12 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     }
   }
 
-  private fun bdpLauncher(imagePath:String,name:String,dob:String){
+  private fun bdpLauncher(imagePath: String, name: String, details: String,dob:Date) {
     val fragment = BirthdayDetailsFragment.newInstance()
     var bundle = Bundle()
-    bundle.putString(Utility.IMAGE_PATH,imagePath)
-    bundle.putString(Utility.NAME,name)
-    bundle.putString(Utility.DOB,dob)
+    bundle.putString(Utility.IMAGE_PATH, imagePath)
+    bundle.putString(Utility.NAME, name)
+    bundle.putString(Utility.DOB, SimpleDateFormat("dd MMMM yyyy").format(dob))
     fragment.arguments = bundle
     navigationManagerHolder.getNavigationFragmentManager().let {
       it.safeAddBackStack(fragment)

@@ -26,4 +26,12 @@ class BirthdayViewModel(val birthdayInteractor: BirthdayInteractor) : ViewModel(
         state.onNext(BirthdayListUpdate.Error)
       })
   }
+
+  internal fun saveContent(list: BirthdayList) {
+    birthdayInteractor.saveContent(list)
+      .subscribeOn(Schedulers.computation())
+      .subscribe {
+        state.onNext(BirthdayListUpdate.InsertSuccess)
+      }
+  }
 }
