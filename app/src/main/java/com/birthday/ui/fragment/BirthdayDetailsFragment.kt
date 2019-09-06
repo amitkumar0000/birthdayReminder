@@ -19,6 +19,14 @@ import kotlinx.android.synthetic.main.birthday_profile_layout.profileImage
 import kotlinx.android.synthetic.main.birthday_profile_layout.profileName
 import kotlinx.android.synthetic.main.birthday_share_layout.sharelayout
 import android.content.pm.ResolveInfo
+import kotlinx.android.synthetic.main.remainder_layout.notificationtime
+import android.app.TimePickerDialog
+import kotlinx.android.synthetic.main.remainder_layout.remainderTime
+import java.util.Calendar
+import android.app.DatePickerDialog.OnDateSetListener
+import android.app.DatePickerDialog
+
+
 
 class BirthdayDetailsFragment : BaseNavigationFragment() {
 
@@ -49,7 +57,47 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       profileDob.text = bundle.getString(Utility.DOB)
     }
 
+    notificationtime.setOnClickListener{
+      showTimePicker()
+    }
+
+    remainderTime.setOnClickListener{
+      showDatePicker()
+    }
+
     setShareView()
+  }
+
+  private fun showDatePicker() {
+    val mcurrentDate = Calendar.getInstance()
+    val mYear = mcurrentDate.get(Calendar.YEAR)
+    val mMonth = mcurrentDate.get(Calendar.MONTH)
+    val mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH)
+
+    val mDatePicker: DatePickerDialog
+    mDatePicker =
+      DatePickerDialog(requireContext(), OnDateSetListener { datepicker, selectedyear, selectedmonth, selectedday ->
+        var selectedmonth = selectedmonth
+        // TODO Auto-generated method stub
+        /*      Your code   to get date and time    */
+        selectedmonth += 1
+        remainderTime.text = "$selectedday/$selectedmonth/$selectedyear"
+      }, mYear, mMonth, mDay)
+    mDatePicker.setTitle("Select Date")
+    mDatePicker.show()  }
+
+  private fun showTimePicker(){
+    val mcurrentTime = Calendar.getInstance()
+    val hour = mcurrentTime.get(Calendar.HOUR_OF_DAY)
+    val minute = mcurrentTime.get(Calendar.MINUTE)
+    val mTimePicker: TimePickerDialog
+    mTimePicker = TimePickerDialog(requireContext(),
+      TimePickerDialog.OnTimeSetListener { timePicker, selectedHour, selectedMinute ->
+        notificationtime.text = "$selectedHour:$selectedMinute hr"
+      }, hour, minute, true
+    )
+    mTimePicker.setTitle("Select Time")
+    mTimePicker.show()
   }
 
   fun setShareView() {
