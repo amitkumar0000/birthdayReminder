@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
 
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
@@ -11,31 +12,47 @@
   <include layout="@layout/birthday_profile_layout"/>
 
   <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
-    android:layout_height="293dp"
-    android:layout_marginTop="56dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_height="match_parent"
+    android:layout_marginTop="400dp"
     android:background="@android:color/white"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintHorizontal_bias="0.393"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/profileDetail">
 
-    <include layout="@layout/horizontal_line_layout"
+    <include
       android:id="@+id/view"
+      layout="@layout/horizontal_line_layout"
+      app:layout_constraintBottom_toTopOf="@+id/sharelayout"
       app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintVertical_weight="1"
       app:layout_constraintTop_toTopOf="parent" />
 
     <include
+      android:id="@+id/sharelayout"
       layout="@layout/birthday_share_layout"
-      app:layout_constraintHorizontal_bias="0.0"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toTopOf="@+id/remaindeLayout"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintVertical_weight="1"
+      app:layout_constraintHorizontal_bias="0.5"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="parent" />
+      app:layout_constraintTop_toBottomOf="@+id/view" />
 
 
-
-
+    <include
+      android:id="@+id/remaindeLayout"
+      layout="@layout/remainder_layout"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      app:layout_constraintVertical_weight="1"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/sharelayout"
+      app:layout_constraintVertical_bias="0.483" />
 
 
   </androidx.constraintlayout.widget.ConstraintLayout>
