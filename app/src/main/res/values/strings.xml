@@ -2,6 +2,7 @@
   <string name="app_name">Birthday</string>
   <string name="birthdayTitle">Birthdays</string>
   <string name="birthdayDetail">Turns %d on %s %s</string>
+  <string name="birthdayMessage">Today is %s Birthday</string>
   <string name="remainingday">%ddays</string>
 
   <!-- TODO: Remove or change this placeholder text -->

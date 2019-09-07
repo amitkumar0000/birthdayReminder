@@ -21,6 +21,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.birthday.BirthdayApplication
 import com.birthday.common.ImageStorageManager
+import com.birthday.scheduler.AlarmManagerScheduler
 import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -41,6 +42,9 @@ class BirthdayAddFragment : DialogFragment()
 
   @Inject
   lateinit var viewModelFactory: BirthdayAddViewModelFactory
+
+  @Inject
+  lateinit var alarmManagerScheduler: AlarmManagerScheduler
 
   private val viewModel by lazy { viewModelFactory.getInstance(this) }
 
@@ -79,6 +83,7 @@ class BirthdayAddFragment : DialogFragment()
       .subscribe {
         when (it) {
           is BirthdayDBUpdate.InsertSuccess -> {
+            alarmManagerScheduler.attachAlarmScheduler(it.item.name,it.item.dob)
             Toast.makeText(requireContext(), "Birthday Added", Toast.LENGTH_SHORT).show()
             targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, null);
             dialog.dismiss();

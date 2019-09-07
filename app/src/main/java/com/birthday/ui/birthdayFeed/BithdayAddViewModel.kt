@@ -17,7 +17,7 @@ class BithdayAddViewModel(val birthdayInteractor: BirthdayInteractor) : ViewMode
     birthdayInteractor.saveContent(list)
       .subscribeOn(Schedulers.computation())
       .subscribe {
-      state.onNext(BirthdayDBUpdate.InsertSuccess)
+      state.onNext(BirthdayDBUpdate.InsertSuccess(list))
     }
   }
 }

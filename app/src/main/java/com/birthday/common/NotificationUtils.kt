@@ -19,7 +19,7 @@ object NotificationUtils {
         CHANNEL_ID,
         "Birthday",
         NotificationManager.IMPORTANCE_DEFAULT)
-      channel.description = "Today Amit Birthday"
+      channel.description = "Birthday Message"
       mNotificationManager.createNotificationChannel(channel)
     }
     val mBuilder = NotificationCompat.Builder(context, CHANNEL_ID)

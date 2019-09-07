@@ -3,11 +3,11 @@ package com.birthday.ui.birthdayFeed
 sealed class BirthdayListUpdate {
   object Loading : BirthdayListUpdate()
   object Error : BirthdayListUpdate()
-  object InsertSuccess : BirthdayListUpdate()
+  data class InsertSuccess(val item:BirthdayList) : BirthdayListUpdate()
   object deleteSuccess : BirthdayListUpdate()
   data class Content(val list: List<BirthdayList>) : BirthdayListUpdate()
 }
 
 sealed class BirthdayDBUpdate{
-  object InsertSuccess : BirthdayDBUpdate()
+  data class InsertSuccess(val item:BirthdayList) : BirthdayDBUpdate()
 }

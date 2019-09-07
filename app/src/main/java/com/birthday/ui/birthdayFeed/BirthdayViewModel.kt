@@ -31,7 +31,7 @@ class BirthdayViewModel(val birthdayInteractor: BirthdayInteractor) : ViewModel(
     birthdayInteractor.saveContent(list)
       .subscribeOn(Schedulers.computation())
       .subscribe {
-        state.onNext(BirthdayListUpdate.InsertSuccess)
+        state.onNext(BirthdayListUpdate.InsertSuccess(list))
       }
   }
 

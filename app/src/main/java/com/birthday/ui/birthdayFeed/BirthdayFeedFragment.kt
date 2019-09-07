@@ -68,9 +68,6 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
 
   private val callbackManager by lazy { CallbackManager.Factory.create() }
 
-  @Inject
-  lateinit var alarmManagerScheduler: AlarmManagerScheduler
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     BirthdayApplication.component.inject(this)
