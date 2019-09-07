@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.birthdayfeed_fragment.toolbar
 import java.util.Calendar
 import javax.inject.Inject
 import android.text.format.DateFormat
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.birthday.common.Utility
@@ -35,8 +36,13 @@ import com.facebook.GraphRequest
 import timber.log.Timber
 import com.facebook.Profile
 import com.facebook.internal.ImageRequest
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.birthdayfeed_fragment.searchView
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 private const val PAGE_LOADING_STATE = 0
 private const val PAGE_ERROR_STATE = 1
@@ -71,6 +77,8 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     return inflater.inflate(R.layout.birthdayfeed_fragment, container, false)
   }
 
+  var backData:List<BirthdayInfoModel>? = null
+
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
@@ -103,39 +111,88 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
                 bInfoModelList.add(transform(it))
               }
               birthdayController.setData(bInfoModelList)
+              backData = bInfoModelList
               infoContainer.displayedChild = PAGE_CONTENT_STATE
             }
             is BirthdayListUpdate.InsertSuccess -> {
               requestContent()
             }
-            is BirthdayListUpdate.deleteSuccess ->{
+            is BirthdayListUpdate.deleteSuccess -> {
               requestContent()
             }
           }
         }
     )
 
+    setSearchView()
+
     requestContent()
   }
 
-  private fun setupSwipeToDelete() {
-    var itemTouchHelperCallback = object:  ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
-      override fun onMove(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder
-      ): Boolean {
-        Timber.d("Item onMove")
-        return true
-      }
+  private fun setSearchView() {
 
-      override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val content = birthdayController.currentData?.get(viewHolder.adapterPosition)
-
-        Timber.d("Item Swiped ")
-        content?.let {  viewModel.deleteContent(it.id) }
+    disposable.add(fromview(searchView).debounce(300, TimeUnit.MILLISECONDS)
+      .filter { text -> !text.isEmpty() && text.length >= 3 }
+      .map { text -> text.toLowerCase().trim() }
+      .distinctUntilChanged()
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe{text->
+        var filterdata = arrayListOf<BirthdayInfoModel>()
+        backData?.forEach {
+          if(it.profileName.contains(text,true))
+            filterdata.add(it)
+        }
+        if(filterdata.size>0)
+          birthdayController.setData(filterdata)
       }
+    )
+
+    searchView.setOnCloseListener {
+      birthdayController.setData(backData)
+      subject.onNext("dummy")
+      true
     }
+  }
+
+  var subject = PublishSubject.create<String>();
+
+
+  private fun fromview(searchView: SearchView): Observable<String> {
+
+    searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+      override fun onQueryTextSubmit(query: String?): Boolean {
+        searchView.clearFocus()
+        return false
+      }
+
+      override fun onQueryTextChange(newText: String): Boolean {
+        subject.onNext(newText)
+        return false
+      }
+    })
+    return subject;
+  }
+
+  private fun setupSwipeToDelete() {
+    var itemTouchHelperCallback =
+      object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        override fun onMove(
+          recyclerView: RecyclerView,
+          viewHolder: RecyclerView.ViewHolder,
+          target: RecyclerView.ViewHolder
+        ): Boolean {
+          Timber.d("Item onMove")
+          return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+          val content = birthdayController.currentData?.get(viewHolder.adapterPosition)
+
+          Timber.d("Item Swiped ")
+          content?.let { viewModel.deleteContent(it.id) }
+        }
+      }
     ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(birthdayList)
   }
 
@@ -188,26 +245,16 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
   private fun transform(it: BirthdayList): BirthdayInfoModel {
     val imagePath = it.imagePath
     val profileName = it.name
-    val dob:Date = it.dob
-
-
+    val dob: Date = it.dob
     val ct = Calendar.getInstance().time
-
     val monthRem = (ct.month - dob.month)
-
     val dayRem = ct.date - dob.date
-
-    val additionalDay = additionalDay(ct.year,ct.month,dob.month)
-
-
-    val totalRem = Math.abs(dayRem) + Math.abs(monthRem*30)+additionalDay
-
+    val additionalDay = additionalDay(ct.year, ct.month, dob.month)
+    val totalRem = Math.abs(dayRem) + Math.abs(monthRem * 30) + additionalDay
     var age = ct.year - dob.year
-
-    if(monthRem>0 || (monthRem==0 && dayRem>0)){
+    if (monthRem > 0 || (monthRem == 0 && dayRem > 0)) {
       age += 1
     }
-
     val profileDetail: String = getString(
       R.string.birthdayDetail, age,
       DateFormat.format("dd", dob) as String,
@@ -225,30 +272,31 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     )
   }
 
-  private val lookup = mapOf<Int,Int>(1 to 1,2 to -1,3 to 1,4 to 0,5 to 1,6 to 0,7 to 1,8 to 1,9 to 0,10 to 1, 11 to 0,12 to 1)
+  private val lookup =
+    mapOf<Int, Int>(1 to 1, 2 to -1, 3 to 1, 4 to 0, 5 to 1, 6 to 0, 7 to 1, 8 to 1, 9 to 0, 10 to 1, 11 to 0, 12 to 1)
 
-  private fun additionalDay(year:Int, cMn: Int, bMon: Int): Int {
-    var aD= 0
+  private fun additionalDay(year: Int, cMn: Int, bMon: Int): Int {
+    var aD = 0
     var cMon = cMn
-    while (cMon!= bMon){
-      if(cMon == 2){
-        if((cMon>bMon && isleap(year+1)) || isleap(year)){
+    while (cMon != bMon) {
+      if (cMon == 2) {
+        if ((cMon > bMon && isleap(year + 1)) || isleap(year)) {
           aD -= 1
-        }else{
+        } else {
           aD -= 2
         }
-        cMon = (cMon+1)%12
-        if(cMon == 0) cMon = 12
+        cMon = (cMon + 1) % 12
+        if (cMon == 0) cMon = 12
         continue
       }
       aD += lookup.get(cMon)!!
-      cMon = (cMon+1)%12
-      if(cMon == 0) cMon = 12
+      cMon = (cMon + 1) % 12
+      if (cMon == 0) cMon = 12
     }
-    return  aD
+    return aD
   }
 
-  private fun isleap(year:Int):Boolean{
+  private fun isleap(year: Int): Boolean {
     // then it is a leap year
     if (year % 400 == 0 || year % 4 == 0)
       return true;
@@ -259,8 +307,6 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
       return false;
     return false;
   }
-
-
 
   private fun requestContent() {
     viewModel.loadContent()
@@ -296,7 +342,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     }
   }
 
-  private fun bdpLauncher(imagePath: String, name: String, details: String,dob:Date) {
+  private fun bdpLauncher(imagePath: String, name: String, details: String, dob: Date) {
     val fragment = BirthdayDetailsFragment.newInstance()
     var bundle = Bundle()
     bundle.putString(Utility.IMAGE_PATH, imagePath)

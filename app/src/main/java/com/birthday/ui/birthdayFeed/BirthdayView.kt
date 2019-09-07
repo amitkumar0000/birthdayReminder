@@ -3,18 +3,13 @@ package com.birthday.ui.birthdayFeed
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Group
-import androidx.fragment.app.FragmentManager
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.birthday.ui.R
 import com.bumptech.glide.Glide
-import com.jakewharton.rxbinding.view.RxView
-import io.reactivex.Observable
 import java.util.Date
 
 @EpoxyModelClass(layout = R.layout.birthday_info_row)
