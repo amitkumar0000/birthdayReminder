@@ -11,6 +11,10 @@
     <item name="android:textAllCaps">false</item>
     <item name="android:textSize">20sp</item>
     <item name="android:actionMenuTextColor">@color/menutextcolor</item>
+    <item name="colorControlHighlight">@color/light_gray</item>
+  </style>
+
+  <style name="MyToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Light">
   </style>
 
   <style name="shareStyle">
