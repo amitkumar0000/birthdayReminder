@@ -29,6 +29,7 @@ ext {
   roomVersion = "2.0.0"
   daggerVersion = "2.18"
   glideVersion = "4.9.0"
+  versionsWork = "2.0.1"
 }
 
 dependencies {
@@ -92,6 +93,9 @@ dependencies {
 
   //Facebook sdk
   implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+
+  //work
+  implementation "androidx.work:work-runtime:$versionsWork"
 
   //Timber
   implementation "com.jakewharton.timber:timber:4.7.1"
