@@ -25,8 +25,9 @@ import kotlinx.android.synthetic.main.remainder_layout.remainderTime
 import java.util.Calendar
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.DatePickerDialog
-
-
+import android.content.res.ColorStateList
+import androidx.cardview.widget.CardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class BirthdayDetailsFragment : BaseNavigationFragment() {
 
@@ -100,12 +101,12 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
     mTimePicker.show()
   }
 
-  fun setShareView() {
+  private fun setShareView() {
     sharelayout.get(0).apply {
       findViewById<TextView>(R.id.share_text).text = getString(R.string.text)
-      findViewById<CircleImageView>(R.id.share_image_container).apply {
+      findViewById<FloatingActionButton>(R.id.fab).apply {
         setImageDrawable(text)
-        circleBackgroundColor = getColor(requireContext(), android.R.color.holo_green_light)
+        backgroundTintList = ColorStateList.valueOf(getColor(requireContext(),R.color.blue_light))
       }
       setOnClickListener {
         startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_APP_MESSAGING))
@@ -114,8 +115,8 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
 
     sharelayout.get(1).apply {
       findViewById<TextView>(R.id.share_text).text = getString(R.string.call)
-      findViewById<CircleImageView>(R.id.share_image_container).apply {
-        circleBackgroundColor = getColor(requireContext(), R.color.blue_light)
+      findViewById<FloatingActionButton>(R.id.fab).apply {
+        backgroundTintList = ColorStateList.valueOf(getColor(requireContext(),android.R.color.holo_green_light))
         setImageDrawable(call)
       }
       setOnClickListener {
@@ -125,9 +126,9 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
 
     sharelayout.get(2).apply {
       findViewById<TextView>(R.id.share_text).text = getString(R.string.email)
-      findViewById<CircleImageView>(R.id.share_image_container).apply {
+      findViewById<FloatingActionButton>(R.id.fab).apply {
         setImageDrawable(email)
-        circleBackgroundColor = getColor(requireContext(), android.R.color.holo_red_dark)
+        backgroundTintList = ColorStateList.valueOf(getColor(requireContext(),android.R.color.holo_red_dark))
         alpha = 0.6F
       }
       setOnClickListener {
@@ -137,10 +138,9 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
 
     sharelayout.get(3).apply {
       findViewById<TextView>(R.id.share_text).text = getString(R.string.share)
-      findViewById<CircleImageView>(R.id.share_image_container).apply {
+      findViewById<FloatingActionButton>(R.id.fab).apply {
         setImageDrawable(share)
-        circleBackgroundColor = getColor(requireContext(), android.R.color.holo_blue_dark)
-
+        backgroundTintList = ColorStateList.valueOf(getColor(requireContext(),android.R.color.holo_blue_dark))
       }
       setOnClickListener {
 

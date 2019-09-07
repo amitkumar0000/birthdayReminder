@@ -7,50 +7,48 @@
   android:layout_height="wrap_content"
   android:orientation="horizontal">
 
-  <include
-    android:id="@+id/textShareId"
-    layout="@layout/share_layout"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    app:layout_constraintHorizontal_weight="1"
-    app:layout_constraintEnd_toStartOf="@+id/shareId"
-    app:layout_constraintHorizontal_bias="0.5"
-    app:layout_constraintStart_toStartOf="parent" />
 
-  <include
-    android:id="@+id/callShareId"
-    layout="@layout/share_layout"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    app:layout_constraintHorizontal_weight="1"
-    app:layout_constraintBottom_toBottomOf="@+id/shareId"
-    app:layout_constraintEnd_toStartOf="@+id/emailShareId"
-    app:layout_constraintHorizontal_bias="0.5"
-    app:layout_constraintStart_toEndOf="@+id/shareId" />
+    <include
+      android:id="@+id/textShareId"
+      layout="@layout/share_layout_card"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="37dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
-  <include
-    android:id="@+id/emailShareId"
-    layout="@layout/share_layout"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    app:layout_constraintHorizontal_weight="1"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.5"
-    app:layout_constraintStart_toEndOf="@+id/callShareId"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.0" />
+    <include
+      android:id="@+id/callShareId"
+      layout="@layout/share_layout_card"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="41dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toEndOf="@+id/textShareId"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.0" />
 
-  <include
-    android:id="@+id/shareId"
-    layout="@layout/share_layout"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    app:layout_constraintHorizontal_weight="1"
-    app:layout_constraintEnd_toStartOf="@+id/callShareId"
-    app:layout_constraintHorizontal_bias="0.5"
-    app:layout_constraintStart_toEndOf="@+id/textShareId"
-    app:layout_constraintTop_toTopOf="parent" />
+    <include
+      android:id="@+id/emailShareId"
+      layout="@layout/share_layout_card"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="33dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toEndOf="@+id/callShareId"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.0" />
+
+    <include
+      android:id="@+id/shareId"
+      layout="@layout/share_layout_card"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="32dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
