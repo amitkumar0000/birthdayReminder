@@ -20,7 +20,7 @@ import android.text.format.DateFormat
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.birthday.common.Utility
+import com.birthday.common.PermissionUtility
 import com.birthday.common.ui.ItemDivider
 import com.birthday.ui.fragment.BaseNavigationFragment
 import com.birthday.ui.fragment.BirthdayDetailsFragment
@@ -345,9 +345,9 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
   private fun bdpLauncher(imagePath: String, name: String, details: String, dob: Date) {
     val fragment = BirthdayDetailsFragment.newInstance()
     var bundle = Bundle()
-    bundle.putString(Utility.IMAGE_PATH, imagePath)
-    bundle.putString(Utility.NAME, name)
-    bundle.putString(Utility.DOB, SimpleDateFormat("dd MMMM yyyy").format(dob))
+    bundle.putString(PermissionUtility.IMAGE_PATH, imagePath)
+    bundle.putString(PermissionUtility.NAME, name)
+    bundle.putString(PermissionUtility.DOB, SimpleDateFormat("dd MMMM yyyy").format(dob))
     fragment.arguments = bundle
     navigationManagerHolder.getNavigationFragmentManager().let {
       it.safeAddBackStack(fragment)

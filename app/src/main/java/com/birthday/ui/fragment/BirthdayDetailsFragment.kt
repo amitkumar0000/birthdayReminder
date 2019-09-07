@@ -9,10 +9,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.get
-import com.birthday.common.Utility
+import com.birthday.common.PermissionUtility
 import com.birthday.ui.R
 import com.bumptech.glide.Glide
-import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.birthday_profile_layout.bdpToolbar
 import kotlinx.android.synthetic.main.birthday_profile_layout.profileDob
 import kotlinx.android.synthetic.main.birthday_profile_layout.profileImage
@@ -26,7 +25,6 @@ import java.util.Calendar
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.DatePickerDialog
 import android.content.res.ColorStateList
-import androidx.cardview.widget.CardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class BirthdayDetailsFragment : BaseNavigationFragment() {
@@ -53,9 +51,9 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
 
 
     bundle?.let {
-      Glide.with(requireContext()).load(bundle.getString(Utility.IMAGE_PATH)).into(profileImage)
-      profileName.text = bundle.getString(Utility.NAME)
-      profileDob.text = bundle.getString(Utility.DOB)
+      Glide.with(requireContext()).load(bundle.getString(PermissionUtility.IMAGE_PATH)).into(profileImage)
+      profileName.text = bundle.getString(PermissionUtility.NAME)
+      profileDob.text = bundle.getString(PermissionUtility.DOB)
     }
 
     notificationtime.setOnClickListener{

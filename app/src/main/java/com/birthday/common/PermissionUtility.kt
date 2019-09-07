@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 
-object Utility {
+object PermissionUtility {
   const val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123
   const val IMAGE_PATH  = "image_path"
   const val NAME = "name"

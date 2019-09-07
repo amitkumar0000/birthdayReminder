@@ -1,7 +1,6 @@
 package com.birthday.ui.birthdayFeed
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +10,13 @@ import com.birthday.ui.R
 import kotlinx.android.synthetic.main.birthday_add_fragment.addDone
 import kotlinx.android.synthetic.main.birthday_add_fragment.profile_image as profileImage
 import androidx.appcompat.app.AlertDialog
-import com.birthday.common.Utility
+import com.birthday.common.PermissionUtility
 import android.provider.MediaStore
 import android.content.Intent
 import android.app.Activity
 import android.graphics.Bitmap
 import java.io.IOException
 import android.content.pm.PackageManager
-import android.os.Environment
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.birthday.BirthdayApplication
@@ -28,10 +26,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.birthday_add_fragment.dob_input
 import kotlinx.android.synthetic.main.birthday_add_fragment.nameInput
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject
@@ -102,7 +96,7 @@ class BirthdayAddFragment : DialogFragment()
     val builder = AlertDialog.Builder(requireContext())
     builder.setTitle("Add Photo!")
     builder.setItems(items) { dialog, item ->
-      val result = Utility.checkPermission(this@BirthdayAddFragment)
+      val result = PermissionUtility.checkPermission(this@BirthdayAddFragment)
       if (items[item] == "Take Photo") {
         userChoosenTask = "Take Photo"
         if (result)
@@ -120,7 +114,7 @@ class BirthdayAddFragment : DialogFragment()
 
   override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
     when (requestCode) {
-      Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE ->
+      PermissionUtility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE ->
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
           if (userChoosenTask.equals("Take Photo"))
             cameraIntent();
