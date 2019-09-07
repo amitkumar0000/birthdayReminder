@@ -26,6 +26,9 @@ import android.app.DatePickerDialog.OnDateSetListener
 import android.app.DatePickerDialog
 import android.content.res.ColorStateList
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.sql.Time
+import java.text.Format
+import java.text.SimpleDateFormat
 
 class BirthdayDetailsFragment : BaseNavigationFragment() {
 
@@ -92,11 +95,18 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
     val mTimePicker: TimePickerDialog
     mTimePicker = TimePickerDialog(requireContext(),
       TimePickerDialog.OnTimeSetListener { timePicker, selectedHour, selectedMinute ->
-        notificationtime.text = "$selectedHour:$selectedMinute hr"
-      }, hour, minute, true
+        notificationtime.text = getTime(selectedHour,selectedMinute)
+      }, hour, minute, false
     )
     mTimePicker.setTitle("Select Time")
     mTimePicker.show()
+  }
+
+  private fun getTime(hr: Int, min: Int): String {
+    val tme = Time(hr, min, 0)//seconds by default set to zero
+    val formatter: Format
+    formatter = SimpleDateFormat("h:mm a")
+    return formatter.format(tme)
   }
 
   private fun setShareView() {

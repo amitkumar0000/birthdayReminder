@@ -25,8 +25,6 @@ class BirthdayApplication : Application() {
 
     component = DaggerBirthdayStorageComponent.builder().contextModule(ContextModule(this))
       .birthdayStorageModule(BirthdayStorageModule()).build()
-
-    BirthdayWorkManager(15,TimeUnit.MINUTES).startWorkManagerWithParams()
   }
 
 }
