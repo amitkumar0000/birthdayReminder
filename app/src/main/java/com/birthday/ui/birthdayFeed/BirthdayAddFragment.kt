@@ -18,9 +18,11 @@ import android.graphics.Bitmap
 import java.io.IOException
 import android.content.pm.PackageManager
 import android.util.Log
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import com.birthday.BirthdayApplication
 import com.birthday.common.ImageStorageManager
+import com.birthday.common.PickerUtils
 import com.birthday.scheduler.AlarmManagerScheduler
 import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -94,6 +96,14 @@ class BirthdayAddFragment : DialogFragment()
     profileImage.setOnClickListener {
       selectImage()
     }
+
+    dob_input.setOnClickListener{
+      PickerUtils.showDatePicker(requireContext(),::datePickerText)
+    }
+  }
+
+  private fun datePickerText(text:String){
+    dob_input.setText(text)
   }
 
   private fun selectImage() {
