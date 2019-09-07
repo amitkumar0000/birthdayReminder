@@ -25,12 +25,15 @@ import com.birthday.common.ImageStorageManager
 import com.birthday.common.PickerUtils
 import com.birthday.scheduler.AlarmManagerScheduler
 import com.bumptech.glide.Glide
+import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.birthday_add_fragment.dob_input
 import kotlinx.android.synthetic.main.birthday_add_fragment.nameInput
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 private const val REQUEST_CAMERA = 1
@@ -97,9 +100,15 @@ class BirthdayAddFragment : DialogFragment()
       selectImage()
     }
 
-    dob_input.setOnClickListener{
-      PickerUtils.showDatePicker(requireContext(),::datePickerText)
-    }
+    RxView.clicks(dob_input)
+      .debounce(300,TimeUnit.MILLISECONDS)
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe({
+        PickerUtils.showDatePicker(requireContext(),::datePickerText)
+      },{
+        Timber.d("Error $it")
+      })
+
   }
 
   private fun datePickerText(text:String){

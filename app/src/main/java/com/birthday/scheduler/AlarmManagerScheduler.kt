@@ -7,8 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
+import com.birthday.common.DateUtils.getRemainingDays
 import com.birthday.ui.R
 import timber.log.Timber
+import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,10 +29,9 @@ class AlarmManagerScheduler @Inject constructor(val context: Context) {
       100, intent, FLAG_CANCEL_CURRENT
     )
 
-    val dobtimeInMillis = dob.time
-    val timeInMillis = System.currentTimeMillis() + dob.month
+    val timeInMillis = System.currentTimeMillis() + (getRemainingDays(dob, Calendar.getInstance().time)-1)*1000*60*60*24
 
-    Timber.d("Time $dobtimeInMillis   $timeInMillis")
+    Timber.d("Time   $timeInMillis")
 
     if(SDK_INT < Build.VERSION_CODES.M) {
       alarmManager?.set(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent);

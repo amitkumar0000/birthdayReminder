@@ -21,6 +21,7 @@ import android.text.format.DateFormat
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.birthday.common.DateUtils
 import com.birthday.common.PermissionUtility
 import com.birthday.common.ui.ItemDivider
 import com.birthday.scheduler.AlarmManagerScheduler
@@ -263,7 +264,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
       DateFormat.format("dd", dob) as String,
       DateFormat.format("MMM", dob) as String
     )
-    val remainingDay = getString(R.string.remainingday, totalRem)
+    val remainingDay = getString(R.string.remainingday, DateUtils.getRemainingDays(dob, Calendar.getInstance().time))
     return BirthdayInfoModel(
       it.id,
       imagePath,
