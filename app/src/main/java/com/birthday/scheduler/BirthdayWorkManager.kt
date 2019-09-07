@@ -1,4 +1,4 @@
-package com.birthday.workmanger
+package com.birthday.scheduler
 
 import androidx.work.Constraints
 import androidx.work.Data

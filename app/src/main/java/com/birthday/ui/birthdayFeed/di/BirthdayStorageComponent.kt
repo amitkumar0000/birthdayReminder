@@ -1,5 +1,6 @@
 package com.birthday.ui.birthdayFeed.di
 
+import com.birthday.di.modules.ContextModule
 import com.birthday.ui.birthdayFeed.BirthdayAddFragment
 import com.birthday.ui.birthdayFeed.BirthdayFeedFragment
 import dagger.Component

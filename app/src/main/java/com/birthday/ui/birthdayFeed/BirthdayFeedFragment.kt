@@ -1,6 +1,7 @@
 package com.birthday.ui.birthdayFeed
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.birthday.common.PermissionUtility
 import com.birthday.common.ui.ItemDivider
+import com.birthday.scheduler.AlarmManagerScheduler
 import com.birthday.ui.fragment.BaseNavigationFragment
 import com.birthday.ui.fragment.BirthdayDetailsFragment
 import com.facebook.CallbackManager
@@ -43,6 +45,7 @@ import kotlinx.android.synthetic.main.birthdayfeed_fragment.searchView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 
 private const val PAGE_LOADING_STATE = 0
 private const val PAGE_ERROR_STATE = 1
@@ -64,6 +67,9 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
   private val disposable by lazy { CompositeDisposable() }
 
   private val callbackManager by lazy { CallbackManager.Factory.create() }
+
+  @Inject
+  lateinit var alarmManagerScheduler: AlarmManagerScheduler
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -315,9 +321,9 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
   private fun setupToolbar() {
     toolbar.apply {
       navigationIcon = settingDrawable
-      setNavigationOnClickListener {
-        syncFacebookContent()
-      }
+        setNavigationOnClickListener {
+          syncFacebookContent()
+        }
       menu.clear()
       inflateMenu(R.menu.birthday_menu)
 
