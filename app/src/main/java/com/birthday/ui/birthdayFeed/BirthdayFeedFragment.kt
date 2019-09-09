@@ -260,9 +260,9 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
 
   private fun setupToolbar() {
     toolbar.apply {
-      navigationIcon = settingDrawable
+    /*  navigationIcon = settingDrawable
         setNavigationOnClickListener {
-        }
+        }*/
       menu.clear()
       inflateMenu(R.menu.birthday_menu)
 
