@@ -114,6 +114,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe({
+        //TODO Amit(?) update the Room database with image path
         Glide.with(requireContext()).load(it).into(profileImage)
       }, {
         Log.d("TAG", it.toString())
