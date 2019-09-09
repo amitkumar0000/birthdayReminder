@@ -24,21 +24,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.birthday.common.DateUtils
 import com.birthday.common.PermissionUtility
 import com.birthday.common.ui.ItemDivider
-import com.birthday.scheduler.AlarmManagerScheduler
 import com.birthday.ui.fragment.BaseNavigationFragment
 import com.birthday.ui.fragment.BirthdayDetailsFragment
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginResult
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.birthdayfeed_fragment.login_button as loginButton
 import java.util.Arrays
-import com.facebook.AccessToken
-import com.facebook.GraphRequest
 import timber.log.Timber
-import com.facebook.Profile
-import com.facebook.internal.ImageRequest
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -66,8 +56,6 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
   private val viewModel by lazy { viewModelFactory.getInstance(this) }
 
   private val disposable by lazy { CompositeDisposable() }
-
-  private val callbackManager by lazy { CallbackManager.Factory.create() }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -200,52 +188,6 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(birthdayList)
   }
 
-  private fun setupFBlogin() {
-    loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday", "user_friends"))
-
-    loginButton.fragment = this
-
-    loginButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-      override fun onSuccess(result: LoginResult?) {
-        Timber.d("FB Login Success")
-        result?.let {
-          getFacebookContent(it)
-        }
-      }
-
-      override fun onCancel() {
-        Timber.d("FB Login onCancel")
-      }
-
-      override fun onError(error: FacebookException?) {
-        Timber.d("FB Login onError")
-      }
-    })
-  }
-
-  private fun getFacebookContent(loginResult: LoginResult) {
-    val request = GraphRequest.newMeRequest(
-      loginResult.accessToken
-    ) { `jsonObject`,
-      response ->
-      run {
-
-        Timber.d(" Response $jsonObject  $response")
-        viewModel.saveContent(
-          BirthdayList(
-            name = jsonObject.getString("first_name") + " " + jsonObject.getString("last_name"),
-            dob = Date(jsonObject.getString("birthday")),
-            imagePath = ImageRequest.getProfilePictureUri(Profile.getCurrentProfile().id, 100, 100).toString()
-          )
-        )
-      }
-    }
-    val parameters = Bundle();
-    parameters.putString("fields", "id,email,first_name,last_name,birthday,friends");
-    request.parameters = parameters;
-    request.executeAsync();
-  }
-
   private fun transform(it: BirthdayList): BirthdayInfoModel {
     val imagePath = it.imagePath
     val profileName = it.name
@@ -320,7 +262,6 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     toolbar.apply {
       navigationIcon = settingDrawable
         setNavigationOnClickListener {
-          syncFacebookContent()
         }
       menu.clear()
       inflateMenu(R.menu.birthday_menu)
@@ -331,13 +272,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     }
   }
 
-  private fun syncFacebookContent() {
-    val accessToken = AccessToken.getCurrentAccessToken()
-    val isLoggedIn = accessToken != null && !accessToken.isExpired
-  }
-
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    callbackManager.onActivityResult(requestCode, resultCode, data);
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
       DIALOG_PICKER -> {

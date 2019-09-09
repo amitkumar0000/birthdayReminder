@@ -17,13 +17,18 @@ import android.app.Activity
 import android.graphics.Bitmap
 import java.io.IOException
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
-import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import com.birthday.BirthdayApplication
 import com.birthday.common.ImageStorageManager
+import com.birthday.common.ImageUtils
+import com.birthday.common.ImageUtils.userChoosenTask
 import com.birthday.common.PickerUtils
+import com.birthday.common.REQUEST_CAMERA
+import com.birthday.common.SELECT_FILE
 import com.birthday.scheduler.AlarmManagerScheduler
+import com.birthday.scheduler.BirthdayWorkManager
 import com.bumptech.glide.Glide
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -36,10 +41,6 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-private const val REQUEST_CAMERA = 1
-private const val SELECT_FILE = 2
-private var userChoosenTask: String = ""
-private var imagePath: String = ""
 private const val RECEIPT_REGEX = "\\d{4}-\\d{4}-\\d{4}-\\d{4}-\\d"
 
 class BirthdayAddFragment : DialogFragment()
@@ -53,6 +54,8 @@ class BirthdayAddFragment : DialogFragment()
 
   private val viewModel by lazy { viewModelFactory.getInstance(this) }
 
+  private lateinit var imagePath:String
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     BirthdayApplication.component.inject(this)
@@ -65,9 +68,14 @@ class BirthdayAddFragment : DialogFragment()
     return inflater.inflate(R.layout.birthday_add_fragment, container, false)
   }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+  fun getURLForResource ( resourceId:Int)
+    =  Uri.parse("android.resource://" + requireContext().packageName + "/" + resourceId).toString();
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
+    imagePath  =  getURLForResource(R.drawable.profile_icon)
     addDone.setOnClickListener {
       val profileName = nameInput.text?.toString()
       var dob: Date? = null
@@ -75,7 +83,7 @@ class BirthdayAddFragment : DialogFragment()
       if (dob_input.text?.toString()?.matches(Regex(".*[dmyDMY].*")) == false) {
         dob = SimpleDateFormat("dd/MM/yyyy").parse(dob_input.text.toString())
       }
-      if (!profileName.isNullOrEmpty() && !imagePath.isNullOrEmpty() && dob != null) {
+      if (!profileName.isNullOrEmpty()  && dob != null) {
         viewModel.saveContent(BirthdayList(name = profileName, dob = dob, imagePath = imagePath))
       } else {
         dialog.dismiss()
@@ -88,7 +96,11 @@ class BirthdayAddFragment : DialogFragment()
       .subscribe {
         when (it) {
           is BirthdayDBUpdate.InsertSuccess -> {
-            alarmManagerScheduler.attachAlarmScheduler(it.item.name,it.item.dob)
+
+            BirthdayWorkManager().startOneTimeWork(it.item.name,it.item.dob.time)
+              .subscribeOn(Schedulers.io())
+              .subscribe()
+
             Toast.makeText(requireContext(), "Birthday Added", Toast.LENGTH_SHORT).show()
             targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, null);
             dialog.dismiss();
@@ -97,7 +109,7 @@ class BirthdayAddFragment : DialogFragment()
       }
 
     profileImage.setOnClickListener {
-      selectImage()
+      ImageUtils.selectImage(fragment = this@BirthdayAddFragment,context = requireContext())
     }
 
     RxView.clicks(dob_input)
@@ -115,35 +127,14 @@ class BirthdayAddFragment : DialogFragment()
     dob_input.setText(text)
   }
 
-  private fun selectImage() {
-    val items = arrayOf<CharSequence>("Take Photo", "Choose from Library", "Cancel")
-    val builder = AlertDialog.Builder(requireContext())
-    builder.setTitle("Add Photo!")
-    builder.setItems(items) { dialog, item ->
-      val result = PermissionUtility.checkPermission(this@BirthdayAddFragment)
-      if (items[item] == "Take Photo") {
-        userChoosenTask = "Take Photo"
-        if (result)
-          cameraIntent()
-      } else if (items[item] == "Choose from Library") {
-        userChoosenTask = "Choose from Library"
-        if (result)
-          galleryIntent()
-      } else if (items[item] == "Cancel") {
-        dialog.dismiss()
-      }
-    }
-    builder.show()
-  }
-
   override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
     when (requestCode) {
       PermissionUtility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE ->
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-          if (userChoosenTask.equals("Take Photo"))
-            cameraIntent();
+          if (ImageUtils.userChoosenTask.equals("Take Photo"))
+            ImageUtils.cameraIntent(this@BirthdayAddFragment);
           else if (userChoosenTask.equals("Choose from Library"))
-            galleryIntent();
+            ImageUtils.galleryIntent(this@BirthdayAddFragment);
         } else {
           Toast.makeText(requireContext(), "Permission is denied", Toast.LENGTH_SHORT).show()
         }
@@ -190,18 +181,6 @@ class BirthdayAddFragment : DialogFragment()
     thumbnail?.let {
       saveImageToInternalStorage(thumbnail, nameInput.text.toString() + System.currentTimeMillis())
     }
-  }
-
-  private fun cameraIntent() {
-    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-    startActivityForResult(intent, REQUEST_CAMERA)
-  }
-
-  private fun galleryIntent() {
-    val intent = Intent()
-    intent.type = "image/*"
-    intent.action = Intent.ACTION_GET_CONTENT//
-    startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE)
   }
 
   companion object {

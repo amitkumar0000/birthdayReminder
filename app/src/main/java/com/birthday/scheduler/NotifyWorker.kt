@@ -14,7 +14,7 @@ import com.birthday.ui.R
 import com.birthday.ui.birthdayFeed.BirthdayFeedFragment
 
 
-class NotifyWorker(val context: Context, val params: WorkerParameters) : Worker(context, params) {
+class NotifyWorker(val context: Context, params: WorkerParameters) : Worker(context, params) {
 
   override fun doWork(): Result {
     // Method to trigger an instant notification

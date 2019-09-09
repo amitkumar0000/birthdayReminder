@@ -29,7 +29,8 @@ class AlarmManagerScheduler @Inject constructor(val context: Context) {
       100, intent, FLAG_CANCEL_CURRENT
     )
 
-    val timeInMillis = System.currentTimeMillis() + (getRemainingDays(dob, Calendar.getInstance().time)-1)*1000*60*60*24
+    val timeInMillis = System.currentTimeMillis() + 1000*60
+//    val timeInMillis = System.currentTimeMillis() + (getRemainingDays(dob, Calendar.getInstance().time)-1)*1000*60*60*24
 
     Timber.d("Time   $timeInMillis")
 

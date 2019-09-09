@@ -1,5 +1,6 @@
 package com.birthday.ui.fragment
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -21,9 +22,25 @@ import android.content.pm.ResolveInfo
 import kotlinx.android.synthetic.main.remainder_layout.notificationtime
 import kotlinx.android.synthetic.main.remainder_layout.remainderTime
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.provider.MediaStore
+import android.util.Log
+import com.birthday.common.ImageStorageManager
+import com.birthday.common.ImageUtils
 import com.birthday.common.PickerUtils.showDatePicker
 import com.birthday.common.PickerUtils.showTimePicker
+import com.birthday.common.REQUEST_CAMERA
+import com.birthday.common.SELECT_FILE
+import com.birthday.scheduler.BirthdayWorkManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.birthday_add_fragment.nameInput
+import kotlinx.android.synthetic.main.birthday_add_fragment.profile_image
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class BirthdayDetailsFragment : BaseNavigationFragment() {
 
@@ -62,15 +79,72 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       showDatePicker(requireContext(), ::DatePickerText)
     }
 
+    profileImage.setOnClickListener{
+      ImageUtils.selectImage(fragment = this@BirthdayDetailsFragment,context = requireContext())
+    }
+
     setShareView()
   }
 
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (resultCode == Activity.RESULT_OK) {
+      if (requestCode == SELECT_FILE)
+        onSelectFromGalleryResult(data)
+      else if (requestCode == REQUEST_CAMERA)
+        onCaptureImageResult(data)
+    }
+  }
+
+  private fun onSelectFromGalleryResult(data: Intent?) {
+    var bm: Bitmap? = null
+    if (data != null) {
+      try {
+        val uri = data.data
+        bm = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri)
+        saveImageToInternalStorage(bm, profileName.text.toString() + System.currentTimeMillis())
+      } catch (e: IOException) {
+        e.printStackTrace()
+      }
+    }
+  }
+
+  private fun saveImageToInternalStorage(bm: Bitmap, fileName: String) {
+    ImageStorageManager.saveToInternalStorage(requireContext(), bm, fileName)
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe({
+        Glide.with(requireContext()).load(it).into(profileImage)
+      }, {
+        Log.d("TAG", it.toString())
+      })
+  }
+
+  private fun onCaptureImageResult(data: Intent?) {
+    val thumbnail = data?.extras?.get("data") as Bitmap?
+    thumbnail?.let {
+      saveImageToInternalStorage(thumbnail, profileName.text.toString() + System.currentTimeMillis())
+    }
+  }
+
+
+
   private fun timePickerText(text: String) {
     notificationtime.text = text
+    reschuldeAlarm()
   }
 
   private fun DatePickerText(text: String) {
     remainderTime.text = text
+    reschuldeAlarm()
+  }
+
+  private fun reschuldeAlarm(){
+    BirthdayWorkManager().startOneTimeWork(profileName.text.toString(), SimpleDateFormat("dd MMM yyyy",
+      Locale.ENGLISH).parse(profileDob.text.toString()).time)
+      .delay(1,TimeUnit.MINUTES)
+      .subscribeOn(Schedulers.io())
+      .subscribe()
   }
 
   private fun setShareView() {
