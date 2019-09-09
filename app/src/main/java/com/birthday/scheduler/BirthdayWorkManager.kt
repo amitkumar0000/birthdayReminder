@@ -6,7 +6,10 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import com.birthday.common.DateUtils
 import io.reactivex.Completable
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class BirthdayWorkManager(
@@ -16,14 +19,16 @@ class BirthdayWorkManager(
 
   val hashMap = HashMap<String, Long>()
 
-  fun startOneTimeWork(name: String, initialDelay: Long):Completable {
+  fun startOneTimeWork(name: String, initialDelay: Long): Completable {
+
     if (hashMap.containsKey(name)) {
       hashMap.remove(name)
-      hashMap.put(name, initialDelay)
+      hashMap[name] = initialDelay
+    } else {
+      hashMap[name] = initialDelay
     }
-
     val data = Data.Builder()
-//      .putString("name", getSortedMap(name, initialDelay).entries.toTypedArray()[0].key)
+      .putString("name", getSortedMap(name, initialDelay).entries.toTypedArray()[0].key)
       .build()
     val work = OneTimeWorkRequest.Builder(NotifyWorker::class.java)
       .setInitialDelay(1, TimeUnit.MINUTES)
@@ -32,7 +37,7 @@ class BirthdayWorkManager(
       .setConstraints(constraints())
       .build()
     WorkManager.getInstance().cancelAllWorkByTag("Birthday-Worker")
-    return Completable.fromAction{
+    return Completable.fromAction {
       WorkManager.getInstance().enqueue(work)
     }
   }

@@ -9,7 +9,6 @@ import androidx.fragment.app.DialogFragment
 import com.birthday.ui.R
 import kotlinx.android.synthetic.main.birthday_add_fragment.addDone
 import kotlinx.android.synthetic.main.birthday_add_fragment.profile_image as profileImage
-import androidx.appcompat.app.AlertDialog
 import com.birthday.common.PermissionUtility
 import android.provider.MediaStore
 import android.content.Intent
@@ -21,6 +20,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.birthday.BirthdayApplication
+import com.birthday.common.DateUtils
 import com.birthday.common.ImageStorageManager
 import com.birthday.common.ImageUtils
 import com.birthday.common.ImageUtils.userChoosenTask
@@ -37,6 +37,7 @@ import kotlinx.android.synthetic.main.birthday_add_fragment.dob_input
 import kotlinx.android.synthetic.main.birthday_add_fragment.nameInput
 import timber.log.Timber
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -97,7 +98,8 @@ class BirthdayAddFragment : DialogFragment()
         when (it) {
           is BirthdayDBUpdate.InsertSuccess -> {
 
-            BirthdayWorkManager().startOneTimeWork(it.item.name,it.item.dob.time)
+            BirthdayWorkManager().startOneTimeWork(it.item.name,
+              DateUtils.getRemainingDays(it.item.dob, Calendar.getInstance().time)* 1000*60*60*24L)
               .subscribeOn(Schedulers.io())
               .subscribe()
 

@@ -26,7 +26,7 @@ import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.util.Log
 import com.birthday.BirthdayApplication
-import com.birthday.common.DateConverter
+import com.birthday.common.DateUtils
 import com.birthday.common.ImageStorageManager
 import com.birthday.common.ImageUtils
 import com.birthday.common.PickerUtils.showDatePicker
@@ -39,6 +39,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -55,7 +56,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
   @Inject
   lateinit var viewModelFactory: BirthdayDetailsViewModelFactory
 
-  private val  viewModel by lazy { viewModelFactory.getInstance(this) }
+  private val viewModel by lazy { viewModelFactory.getInstance(this) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -90,8 +91,8 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       showDatePicker(requireContext(), ::DatePickerText)
     }
 
-    profileImage.setOnClickListener{
-      ImageUtils.selectImage(fragment = this@BirthdayDetailsFragment,context = requireContext())
+    profileImage.setOnClickListener {
+      ImageUtils.selectImage(fragment = this@BirthdayDetailsFragment, context = requireContext())
     }
 
     setShareView()
@@ -125,9 +126,13 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe({
-        viewModel.updateContent(it,profileName.text.toString(),
-          SimpleDateFormat("dd MMM yyyy",
-            Locale.ENGLISH).parse(profileDob.text.toString()))
+        viewModel.updateContent(
+          it, profileName.text.toString(),
+          SimpleDateFormat(
+            "dd MMM yyyy",
+            Locale.ENGLISH
+          ).parse(profileDob.text.toString())
+        )
         Glide.with(requireContext()).load(it).into(profileImage)
       }, {
         Log.d("TAG", it.toString())
@@ -141,8 +146,6 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
     }
   }
 
-
-
   private fun timePickerText(text: String) {
     notificationtime.text = text
     reschuldeAlarm()
@@ -153,10 +156,17 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
     reschuldeAlarm()
   }
 
-  private fun reschuldeAlarm(){
-    BirthdayWorkManager().startOneTimeWork(profileName.text.toString(), SimpleDateFormat("dd MMM yyyy",
-      Locale.ENGLISH).parse(profileDob.text.toString()).time)
-      .delay(1,TimeUnit.MINUTES)
+  private fun reschuldeAlarm() {
+    BirthdayWorkManager().startOneTimeWork(
+      profileName.text.toString(),
+      DateUtils.getRemainingDays(
+        SimpleDateFormat(
+          "dd MMM yyyy",
+          Locale.ENGLISH
+        ).parse(profileDob.text.toString()), Calendar.getInstance().time
+      ) * 1000 * 60 * 60 * 24L
+    )
+      .delay(10, TimeUnit.SECONDS)
       .subscribeOn(Schedulers.io())
       .subscribe()
   }
