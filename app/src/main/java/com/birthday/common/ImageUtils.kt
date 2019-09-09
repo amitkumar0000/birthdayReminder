@@ -17,7 +17,7 @@ object ImageUtils {
     val builder = AlertDialog.Builder(context)
     builder.setTitle("Add Photo!")
     builder.setItems(items) { dialog, item ->
-      val result = PermissionUtility.checkPermission(fragment)
+      val result = PermissionUtility.checkPermission(fragment,context)
       if (items[item] == "Take Photo") {
         userChoosenTask = "Take Photo"
         if (result)

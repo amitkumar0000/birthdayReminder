@@ -14,7 +14,7 @@
     android:layout_height="100dp"
     android:layout_marginStart="16dp"
     android:layout_marginTop="48dp"
-    android:src="@drawable/ic_add_a_photo"
+    android:src="@drawable/profile_icon"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.415"
     app:layout_constraintStart_toStartOf="parent"
