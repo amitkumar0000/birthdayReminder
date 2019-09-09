@@ -2,6 +2,7 @@ package com.birthday.ui.birthdayFeed
 
 import io.reactivex.Completable
 import io.reactivex.Single
+import java.util.Date
 import javax.inject.Inject
 
 class BirthdayRepository @Inject constructor(val manager: BirthdayListManager) : DatabaseRepository {
@@ -19,6 +20,12 @@ class BirthdayRepository @Inject constructor(val manager: BirthdayListManager) :
   override fun deleteItem(id:Long): Completable {
     return Completable.fromAction {
       manager.deleteItem(id)
+    }
+  }
+
+  fun updateItem(imagePath:String,name: String, dob: Date): Completable {
+    return Completable.fromAction {
+      manager.updateItem(imagePath,name,dob)
     }
   }
 }

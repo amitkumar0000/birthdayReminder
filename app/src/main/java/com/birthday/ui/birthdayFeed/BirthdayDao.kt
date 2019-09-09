@@ -8,6 +8,7 @@ import androidx.room.Query
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import java.util.Date
 
 @Dao
 interface BirthdayDao {
@@ -20,4 +21,7 @@ interface BirthdayDao {
 
   @Query("Delete from BirthdayList where id is :itemId" )
   fun delete(itemId:Long): Int
+
+  @Query("Update BirthdayList set imagePath = :imagePath  where name is :name and dob is :dob ")
+  fun update(imagePath:String,name: String, dob: Date): Int
 }

@@ -25,6 +25,8 @@ import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.util.Log
+import com.birthday.BirthdayApplication
+import com.birthday.common.DateConverter
 import com.birthday.common.ImageStorageManager
 import com.birthday.common.ImageUtils
 import com.birthday.common.PickerUtils.showDatePicker
@@ -35,12 +37,11 @@ import com.birthday.scheduler.BirthdayWorkManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.birthday_add_fragment.nameInput
-import kotlinx.android.synthetic.main.birthday_add_fragment.profile_image
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class BirthdayDetailsFragment : BaseNavigationFragment() {
 
@@ -50,6 +51,16 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
   private val text by lazy { resources.getDrawable(R.drawable.text, null) }
   private val email by lazy { resources.getDrawable(R.drawable.mail, null) }
   private val share by lazy { resources.getDrawable(R.drawable.share, null) }
+
+  @Inject
+  lateinit var viewModelFactory: BirthdayDetailsViewModelFactory
+
+  private val  viewModel by lazy { viewModelFactory.getInstance(this) }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    BirthdayApplication.component.inject(this)
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -114,7 +125,9 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe({
-        //TODO Amit(?) update the Room database with image path
+        viewModel.updateContent(it,profileName.text.toString(),
+          SimpleDateFormat("dd MMM yyyy",
+            Locale.ENGLISH).parse(profileDob.text.toString()))
         Glide.with(requireContext()).load(it).into(profileImage)
       }, {
         Log.d("TAG", it.toString())

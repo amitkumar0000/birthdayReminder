@@ -2,6 +2,7 @@ package com.birthday.ui.birthdayFeed
 
 import io.reactivex.Completable
 import io.reactivex.Single
+import java.util.Date
 import javax.inject.Inject
 
 class BirthdayInteractor @Inject constructor(
@@ -18,6 +19,11 @@ class BirthdayInteractor @Inject constructor(
 
   fun deleteId(id: Long): Completable {
     return birthdayRepository.deleteItem(id)
+
+  }
+
+  fun updateContent(imagePath:String,name: String, dob: Date): Completable {
+    return birthdayRepository.updateItem(imagePath,name,dob)
 
   }
 }
