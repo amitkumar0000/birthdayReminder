@@ -23,12 +23,12 @@ class BirthdayWorkManager(
 
     if (hashMap.containsKey(name)) {
       hashMap.remove(name)
-      hashMap[name] = initialDelay
+      hashMap[name] = initialDelay + System.currentTimeMillis()
     } else {
-      hashMap[name] = initialDelay
+      hashMap[name] = initialDelay + System.currentTimeMillis()
     }
     val data = Data.Builder()
-      .putString("name", getSortedMap(name, initialDelay).entries.toTypedArray()[0].key)
+      .putString("name", getSortedMap().entries.toTypedArray()[0].key)
       .build()
     val work = OneTimeWorkRequest.Builder(NotifyWorker::class.java)
       .setInitialDelay(1, TimeUnit.MINUTES)
@@ -42,7 +42,7 @@ class BirthdayWorkManager(
     }
   }
 
-  private fun getSortedMap(name: String, initialDelay: Long): Map<String, Long> {
+  private fun getSortedMap(): Map<String, Long> {
 
     return hashMap.toList().sortedBy { (_, value) -> value }.toMap()
   }
