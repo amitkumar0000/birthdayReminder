@@ -207,7 +207,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
         setImageDrawable(call)
       }
       setOnClickListener {
-        startActivity(Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI))
+        startActivity(Intent(Intent.ACTION_DIAL))
       }
     }
 
