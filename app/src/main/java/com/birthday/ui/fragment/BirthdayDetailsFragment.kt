@@ -31,10 +31,12 @@ import com.birthday.common.ImageStorageManager
 import com.birthday.common.ImageUtils
 import com.birthday.common.PickerUtils.showDatePicker
 import com.birthday.common.PickerUtils.showTimePicker
+import com.birthday.common.PrefenceManager
 import com.birthday.common.REQUEST_CAMERA
 import com.birthday.common.SELECT_FILE
 import com.birthday.scheduler.BirthdayWorkManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.IOException
@@ -55,6 +57,9 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
 
   @Inject
   lateinit var viewModelFactory: BirthdayDetailsViewModelFactory
+
+  @Inject
+  lateinit var birthdayWorkManager: BirthdayWorkManager
 
   private val viewModel by lazy { viewModelFactory.getInstance(this) }
 
@@ -157,7 +162,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
   }
 
   private fun reschuldeAlarm() {
-    BirthdayWorkManager().startOneTimeWork(
+    storeInPref(
       profileName.text.toString(),
       DateUtils.getRemainingDays(
         SimpleDateFormat(
@@ -166,10 +171,22 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
         ).parse(profileDob.text.toString()), Calendar.getInstance().time
       ) * 1000 * 60 * 60 * 24L
     )
-      .delay(10, TimeUnit.SECONDS)
-      .subscribeOn(Schedulers.io())
-      .subscribe()
+      .andThen {
+        birthdayWorkManager.startOneTimeWork()
+      }.subscribe()
   }
+
+  private fun storeInPref(name:String,timeInMillis:Long)=
+    Completable.fromAction {
+      var hashMap = PrefenceManager.loadHashMap(requireContext())
+      if (hashMap.containsKey(name)) {
+        hashMap.remove(name)
+        hashMap[name] = timeInMillis + System.currentTimeMillis()
+      } else {
+        hashMap[name] = timeInMillis + System.currentTimeMillis()
+      }
+      PrefenceManager.saveHashMap(requireContext(), hashMap)
+    }.subscribeOn(Schedulers.io())
 
   private fun setShareView() {
     sharelayout.get(0).apply {

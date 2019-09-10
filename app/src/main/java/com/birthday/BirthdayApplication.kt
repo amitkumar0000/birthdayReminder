@@ -11,8 +11,7 @@ import timber.log.Timber
 import io.fabric.sdk.android.Fabric
 import com.crashlytics.android.core.CrashlyticsCore
 import com.crashlytics.android.Crashlytics
-
-
+import com.facebook.stetho.Stetho
 
 class BirthdayApplication : Application() {
 
@@ -26,8 +25,10 @@ class BirthdayApplication : Application() {
 
     setupCrashlytics()
 
-    if (BuildConfig.DEBUG)
+    if (BuildConfig.DEBUG) {
       Timber.plant(Timber.DebugTree())
+      Stetho.initializeWithDefaults(this);
+    }
 
     component = DaggerBirthdayStorageComponent.builder().contextModule(ContextModule(this))
       .birthdayStorageModule(BirthdayStorageModule()).build()

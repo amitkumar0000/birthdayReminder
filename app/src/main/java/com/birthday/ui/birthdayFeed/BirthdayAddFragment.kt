@@ -25,12 +25,14 @@ import com.birthday.common.ImageStorageManager
 import com.birthday.common.ImageUtils
 import com.birthday.common.ImageUtils.userChoosenTask
 import com.birthday.common.PickerUtils
+import com.birthday.common.PrefenceManager
 import com.birthday.common.REQUEST_CAMERA
 import com.birthday.common.SELECT_FILE
 import com.birthday.scheduler.AlarmManagerScheduler
 import com.birthday.scheduler.BirthdayWorkManager
 import com.bumptech.glide.Glide
 import com.jakewharton.rxbinding2.view.RxView
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.birthday_add_fragment.dob_input
@@ -52,6 +54,9 @@ class BirthdayAddFragment : DialogFragment()
 
   @Inject
   lateinit var alarmManagerScheduler: AlarmManagerScheduler
+
+  @Inject
+  lateinit var birthdayWorkManager: BirthdayWorkManager
 
   private val viewModel by lazy { viewModelFactory.getInstance(this) }
 
@@ -98,10 +103,13 @@ class BirthdayAddFragment : DialogFragment()
         when (it) {
           is BirthdayDBUpdate.InsertSuccess -> {
 
-            BirthdayWorkManager().startOneTimeWork(it.item.name,
-              DateUtils.getRemainingDays(it.item.dob, Calendar.getInstance().time)* 1000*60*60*24L)
-              .subscribeOn(Schedulers.io())
-              .subscribe()
+            storeInPref(
+              it.item.name,
+              DateUtils.getRemainingDays(it.item.dob, Calendar.getInstance().time) * 1000 * 60 * 60 * 24L
+            )
+              .andThen {
+                birthdayWorkManager.startOneTimeWork()
+              }.subscribe()
 
             Toast.makeText(requireContext(), "Birthday Added", Toast.LENGTH_SHORT).show()
             targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, null);
@@ -124,6 +132,18 @@ class BirthdayAddFragment : DialogFragment()
       })
 
   }
+
+  private fun storeInPref(name:String,timeInMillis:Long)=
+    Completable.fromAction {
+      var hashMap = PrefenceManager.loadHashMap(requireContext())
+      if (hashMap.containsKey(name)) {
+        hashMap.remove(name)
+        hashMap[name] = timeInMillis + System.currentTimeMillis()
+      } else {
+        hashMap[name] = timeInMillis + System.currentTimeMillis()
+      }
+      PrefenceManager.saveHashMap(requireContext(), hashMap)
+    }.subscribeOn(Schedulers.io())
 
   private fun datePickerText(text:String){
     dob_input.setText(text)

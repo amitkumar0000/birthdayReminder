@@ -1,7 +1,6 @@
 package com.birthday.ui.birthdayFeed
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,11 +22,12 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.birthday.common.DateUtils
 import com.birthday.common.PermissionUtility
+import com.birthday.common.PrefenceManager
 import com.birthday.common.ui.ItemDivider
 import com.birthday.ui.fragment.BaseNavigationFragment
 import com.birthday.ui.fragment.BirthdayDetailsFragment
+import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
-import java.util.Arrays
 import timber.log.Timber
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -36,7 +36,6 @@ import kotlinx.android.synthetic.main.birthdayfeed_fragment.searchView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import javax.inject.Named
 
 private const val PAGE_LOADING_STATE = 0
 private const val PAGE_ERROR_STATE = 1
@@ -69,7 +68,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     return inflater.inflate(R.layout.birthdayfeed_fragment, container, false)
   }
 
-  var backData:List<BirthdayInfoModel>? = null
+  var backData: List<BirthdayInfoModel>? = null
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
@@ -110,6 +109,12 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
               requestContent()
             }
             is BirthdayListUpdate.deleteSuccess -> {
+              Completable.fromAction {
+                var hashMap = PrefenceManager.loadHashMap(requireContext())
+                hashMap.remove(it.name)
+                PrefenceManager.saveHashMap(requireContext(), hashMap)
+              }.subscribeOn(Schedulers.io())
+                .subscribe()
               requestContent()
             }
           }
@@ -129,13 +134,13 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
       .distinctUntilChanged()
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe{text->
+      .subscribe { text ->
         var filterdata = arrayListOf<BirthdayInfoModel>()
         backData?.forEach {
-          if(it.profileName.contains(text,true))
+          if (it.profileName.contains(text, true))
             filterdata.add(it)
         }
-        if(filterdata.size>0)
+        if (filterdata.size > 0)
           birthdayController.setData(filterdata)
       }
     )
@@ -148,7 +153,6 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
   }
 
   var subject = PublishSubject.create<String>();
-
 
   private fun fromview(searchView: SearchView): Observable<String> {
 
@@ -182,7 +186,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
           val content = birthdayController.currentData?.get(viewHolder.adapterPosition)
 
           Timber.d("Item Swiped ")
-          content?.let { viewModel.deleteContent(it.id) }
+          content?.let { viewModel.deleteContent(it.id, it.profileName) }
         }
       }
     ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(birthdayList)
@@ -260,9 +264,9 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
 
   private fun setupToolbar() {
     toolbar.apply {
-    /*  navigationIcon = settingDrawable
-        setNavigationOnClickListener {
-        }*/
+      /*  navigationIcon = settingDrawable
+          setNavigationOnClickListener {
+          }*/
       menu.clear()
       inflateMenu(R.menu.birthday_menu)
 

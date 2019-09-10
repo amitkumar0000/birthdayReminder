@@ -1,53 +1,49 @@
 package com.birthday.scheduler
 
+import android.content.Context
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import com.birthday.common.DateUtils
+import com.birthday.common.PrefenceManager
 import io.reactivex.Completable
-import java.util.Calendar
-import java.util.Date
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class BirthdayWorkManager(
-  private val repeatInterval: Long = 1,
-  private val intervalUnit: TimeUnit = TimeUnit.SECONDS
-) {
+class BirthdayWorkManager @Inject constructor(val context: Context) {
 
-  val hashMap = HashMap<String, Long>()
+  fun startOneTimeWork(): Completable? {
+    var hashMap = PrefenceManager.loadHashMap(context)
+    if(hashMap.isNotEmpty()) {
 
-  fun startOneTimeWork(name: String, initialDelay: Long): Completable {
+      return Completable.fromAction {
 
-    if (hashMap.containsKey(name)) {
-      hashMap.remove(name)
-      hashMap[name] = initialDelay + System.currentTimeMillis()
-    } else {
-      hashMap[name] = initialDelay + System.currentTimeMillis()
-    }
-    val data = Data.Builder()
-      .putString("name", getSortedMap().entries.toTypedArray()[0].key)
-      .build()
-    val work = OneTimeWorkRequest.Builder(NotifyWorker::class.java)
-      .setInitialDelay(1, TimeUnit.MINUTES)
-      .addTag("Birthday-Worker")
-      .setInputData(data)
-      .setConstraints(constraints())
-      .build()
-    WorkManager.getInstance().cancelAllWorkByTag("Birthday-Worker")
-    return Completable.fromAction {
-      WorkManager.getInstance().enqueue(work)
+        val data = Data.Builder()
+          .putString("name", getSortedMap(hashMap).entries.toTypedArray()[0].key)
+          .build()
+        val work = OneTimeWorkRequest.Builder(NotifyWorker::class.java)
+          .setInitialDelay(1, TimeUnit.MINUTES)
+          .addTag("Birthday-Worker")
+          .setInputData(data)
+          .setConstraints(constraints())
+          .build()
+        WorkManager.getInstance().cancelAllWorkByTag("Birthday-Worker")
+        WorkManager.getInstance().enqueue(work)
+      }.subscribeOn(Schedulers.io())
+    }else{
+      return null
     }
   }
 
-  private fun getSortedMap(): Map<String, Long> {
+  private fun getSortedMap(hashMap: HashMap<String, Long>): Map<String, Long> {
 
     return hashMap.toList().sortedBy { (_, value) -> value }.toMap()
   }
 
-  fun startWorkManagerWithParams() {
+  fun startWorkManagerWithParams(repeatInterval: Long, intervalUnit: TimeUnit) {
     val data = Data.Builder()
       .build()
     val work = PeriodicWorkRequest.Builder(NotifyWorker::class.java, repeatInterval, intervalUnit)

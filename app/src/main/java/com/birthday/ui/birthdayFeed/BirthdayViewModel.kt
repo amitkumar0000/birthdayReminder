@@ -35,11 +35,11 @@ class BirthdayViewModel(val birthdayInteractor: BirthdayInteractor) : ViewModel(
       }
   }
 
-  fun deleteContent(id: Long) {
+  fun deleteContent(id: Long, profileName: String) {
     birthdayInteractor.deleteId(id)
       .subscribeOn(Schedulers.io())
       .subscribe{
-        state.onNext(BirthdayListUpdate.deleteSuccess)
+        state.onNext(BirthdayListUpdate.deleteSuccess(profileName))
       }
   }
 }
