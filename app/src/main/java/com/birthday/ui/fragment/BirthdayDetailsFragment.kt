@@ -219,7 +219,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
         alpha = 0.6F
       }
       setOnClickListener {
-        openGmail(arrayOf("amit.ap1924@gmail.com"), "Happy birthday", "")
+        openGmail(arrayOf(""), "Happy birthday", "")
       }
     }
 
