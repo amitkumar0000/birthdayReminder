@@ -12,6 +12,8 @@ class BirthdayController : TypedEpoxyController<List<BirthdayInfoModel>>() {
         profileDetails(it.profileDetail)
         remainingDate(it.remainingDate)
         dob(it.dob)
+        remainderDate(it.remainderDate)
+        remainderTime(it.remainderTime)
         launchBDP(it.launchFunction)
       }
     }

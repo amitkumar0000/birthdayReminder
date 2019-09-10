@@ -25,4 +25,21 @@ class BirthdayDetailsViewModel(val birthdayInteractor: BirthdayInteractor) : Vie
       }
   }
 
+  internal fun updateRemainderTimeContent(date:Date,name:String,dob: Date){
+    birthdayInteractor.updateRemainderTimeContent(date,name,dob)
+      .subscribeOn(Schedulers.computation())
+      .subscribe {
+        Timber.d("updateRemainderTimeContent with $date is success")
+      }
+
+  }
+
+  internal fun updateNotificationTimeContent(time: String,name:String,dob: Date) {
+    birthdayInteractor.uodateNotificationTimeContent(time,name,dob)
+      .subscribeOn(Schedulers.computation())
+      .subscribe {
+        Timber.d("Update updateNotificationTimeContent $time is success")
+      }
+  }
+
 }

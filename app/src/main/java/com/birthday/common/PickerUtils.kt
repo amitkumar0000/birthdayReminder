@@ -58,7 +58,7 @@ object PickerUtils {
     mTimePicker.show()
   }
 
-  private fun getTime(hr: Int, min: Int): String {
+  fun getTime(hr: Int, min: Int): String {
     val tme = Time(hr, min, 0)//seconds by default set to zero
     val formatter: Format
     formatter = SimpleDateFormat("h:mm a")

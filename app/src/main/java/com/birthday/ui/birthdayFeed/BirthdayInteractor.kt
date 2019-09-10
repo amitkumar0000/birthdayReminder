@@ -26,4 +26,14 @@ class BirthdayInteractor @Inject constructor(
     return birthdayRepository.updateItem(imagePath,name,dob)
 
   }
+
+  fun updateRemainderTimeContent(date: Date,name:String,dob: Date): Completable {
+    return birthdayRepository.updateDateItem(date,name,dob)
+
+  }
+
+  fun uodateNotificationTimeContent(time: String,name:String,dob: Date): Completable {
+    return birthdayRepository.updateTimeItem(time,name,dob)
+
+  }
 }

@@ -8,7 +8,9 @@ import java.util.Date
 data class BirthdayList(
   var name:String,
   var dob: Date,
-  var imagePath:String
+  var imagePath:String,
+  var remainderDate:Date,
+  var remainderTime: String
 ){
   @PrimaryKey(autoGenerate = true)
   var id: Long = 0

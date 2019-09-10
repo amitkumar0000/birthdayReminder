@@ -28,4 +28,16 @@ class BirthdayRepository @Inject constructor(val manager: BirthdayListManager) :
       manager.updateItem(imagePath,name,dob)
     }
   }
+
+  fun updateDateItem(date: Date,name:String,dob: Date): Completable {
+    return Completable.fromAction {
+      manager.updateDateItem(date,name,dob)
+    }
+  }
+
+  fun updateTimeItem(time: String,name:String,dob: Date): Completable {
+    return Completable.fromAction {
+      manager.updateTimeItem(time,name,dob)
+    }
+  }
 }

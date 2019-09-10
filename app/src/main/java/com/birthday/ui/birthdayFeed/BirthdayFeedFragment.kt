@@ -21,8 +21,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.birthday.common.DateUtils
-import com.birthday.common.PermissionUtility
 import com.birthday.common.PrefenceManager
+import com.birthday.common.Utils
 import com.birthday.common.ui.ItemDivider
 import com.birthday.ui.fragment.BaseNavigationFragment
 import com.birthday.ui.fragment.BirthdayDetailsFragment
@@ -199,9 +199,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     val ct = Calendar.getInstance().time
     val monthRem = (ct.month - dob.month)
     val dayRem = ct.date - dob.date
-    val additionalDay = additionalDay(ct.year, ct.month, dob.month)
-    val totalRem = Math.abs(dayRem) + Math.abs(monthRem * 30) + additionalDay
-    var age = ct.year - dob.year
+    var age = Calendar.getInstance().time.year - dob.year
     if (monthRem > 0 || (monthRem == 0 && dayRem > 0)) {
       age += 1
     }
@@ -212,51 +210,18 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     )
     val remainingDay = getString(R.string.remainingday, DateUtils.getRemainingDays(dob, Calendar.getInstance().time))
     return BirthdayInfoModel(
-      it.id,
-      imagePath,
-      profileName,
-      profileDetail,
-      remainingDay,
-      it.dob,
-      ::bdpLauncher
+      id =it.id,
+      imagePath = imagePath,
+      profileName = profileName,
+      profileDetail = profileDetail,
+      remainingDate = remainingDay,
+      dob = it.dob,
+      remainderDate = it.remainderDate,
+      remainderTime = it.remainderTime,
+      launchFunction = ::bdpLauncher
     )
   }
 
-  private val lookup =
-    mapOf<Int, Int>(1 to 1, 2 to -1, 3 to 1, 4 to 0, 5 to 1, 6 to 0, 7 to 1, 8 to 1, 9 to 0, 10 to 1, 11 to 0, 12 to 1)
-
-  private fun additionalDay(year: Int, cMn: Int, bMon: Int): Int {
-    var aD = 0
-    var cMon = cMn
-    while (cMon != bMon) {
-      if (cMon == 2) {
-        if ((cMon > bMon && isleap(year + 1)) || isleap(year)) {
-          aD -= 1
-        } else {
-          aD -= 2
-        }
-        cMon = (cMon + 1) % 12
-        if (cMon == 0) cMon = 12
-        continue
-      }
-      aD += lookup.get(cMon)!!
-      cMon = (cMon + 1) % 12
-      if (cMon == 0) cMon = 12
-    }
-    return aD
-  }
-
-  private fun isleap(year: Int): Boolean {
-    // then it is a leap year
-    if (year % 400 == 0 || year % 4 == 0)
-      return true;
-
-    // Else If a year is muliplt of 100,
-    // then it is not a leap year
-    if (year % 100 == 0)
-      return false;
-    return false;
-  }
 
   private fun requestContent() {
     viewModel.loadContent()
@@ -285,12 +250,20 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     }
   }
 
-  private fun bdpLauncher(imagePath: String, name: String, details: String, dob: Date) {
+  private fun bdpLauncher(imagePath: String,
+    name: String, details: String,
+    dob: Date,
+    remainderDate:Date,
+    remainderTime:String
+
+  ) {
     val fragment = BirthdayDetailsFragment.newInstance()
     var bundle = Bundle()
-    bundle.putString(PermissionUtility.IMAGE_PATH, imagePath)
-    bundle.putString(PermissionUtility.NAME, name)
-    bundle.putString(PermissionUtility.DOB, SimpleDateFormat("dd MMMM yyyy").format(dob))
+    bundle.putString(Utils.IMAGE_PATH, imagePath)
+    bundle.putString(Utils.NAME, name)
+    bundle.putString(Utils.DOB, SimpleDateFormat("dd MMMM yyyy").format(dob))
+    bundle.putString(Utils.REMAINDER_DATE, SimpleDateFormat("dd/MM/yyyy").format(remainderDate))
+    bundle.putString(Utils.REMAINDER_TIME, remainderTime)
     fragment.arguments = bundle
     navigationManagerHolder.getNavigationFragmentManager().let {
       it.safeAddBackStack(fragment)

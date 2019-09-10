@@ -3,14 +3,12 @@ package com.birthday.ui.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.get
-import com.birthday.common.PermissionUtility
 import com.birthday.ui.R
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.birthday_profile_layout.bdpToolbar
@@ -26,6 +24,7 @@ import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.util.Log
 import com.birthday.BirthdayApplication
+import com.birthday.common.DateConverter
 import com.birthday.common.DateUtils
 import com.birthday.common.ImageStorageManager
 import com.birthday.common.ImageUtils
@@ -34,6 +33,7 @@ import com.birthday.common.PickerUtils.showTimePicker
 import com.birthday.common.PrefenceManager
 import com.birthday.common.REQUEST_CAMERA
 import com.birthday.common.SELECT_FILE
+import com.birthday.common.Utils
 import com.birthday.scheduler.BirthdayWorkManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.reactivex.Completable
@@ -43,7 +43,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class BirthdayDetailsFragment : BaseNavigationFragment() {
@@ -83,9 +82,11 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
 
 
     bundle?.let {
-      Glide.with(requireContext()).load(bundle.getString(PermissionUtility.IMAGE_PATH)).into(profileImage)
-      profileName.text = bundle.getString(PermissionUtility.NAME)
-      profileDob.text = bundle.getString(PermissionUtility.DOB)
+      Glide.with(requireContext()).load(bundle.getString(Utils.IMAGE_PATH)).into(profileImage)
+      profileName.text = bundle.getString(Utils.NAME)
+      profileDob.text = bundle.getString(Utils.DOB)
+      remainderTime.text = bundle.getString(Utils.REMAINDER_DATE)
+      notificationtime.text = bundle.getString(Utils.REMAINDER_TIME)
     }
 
     notificationtime.setOnClickListener {
@@ -153,11 +154,26 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
 
   private fun timePickerText(text: String) {
     notificationtime.text = text
+    viewModel.updateNotificationTimeContent(text,profileName.text.toString(),
+      SimpleDateFormat(
+        "dd MMM yyyy",
+        Locale.ENGLISH
+      ).parse(profileDob.text.toString())    )
     reschuldeAlarm()
   }
 
   private fun DatePickerText(text: String) {
     remainderTime.text = text
+    viewModel.updateRemainderTimeContent(
+      SimpleDateFormat(
+        "dd/MM/yyyy",
+        Locale.ENGLISH
+      ).parse(text),profileName.text.toString(),
+      SimpleDateFormat(
+        "dd MMM yyyy",
+        Locale.ENGLISH
+      ).parse(profileDob.text.toString())
+    )
     reschuldeAlarm()
   }
 
@@ -176,7 +192,7 @@ class BirthdayDetailsFragment : BaseNavigationFragment() {
       }.subscribe()
   }
 
-  private fun storeInPref(name:String,timeInMillis:Long)=
+  private fun storeInPref(name: String, timeInMillis: Long) =
     Completable.fromAction {
       var hashMap = PrefenceManager.loadHashMap(requireContext())
       if (hashMap.containsKey(name)) {

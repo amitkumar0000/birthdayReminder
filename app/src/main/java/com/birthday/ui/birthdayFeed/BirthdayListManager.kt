@@ -21,4 +21,14 @@ class BirthdayListManager(private val database: BirthdayDatabase) {
   fun updateItem(imagePath:String,name: String, dob: Date) : Int {
     return database.birthdayDao().update(imagePath,name,dob)
   }
+
+  fun updateDateItem(date: Date,name:String,dob: Date):Int {
+    return database.birthdayDao().updateDate(date,name,dob)
+
+  }
+
+  fun updateTimeItem(time: String,name:String,dob: Date): Int {
+    return database.birthdayDao().updateTime(time,name,dob)
+
+  }
 }

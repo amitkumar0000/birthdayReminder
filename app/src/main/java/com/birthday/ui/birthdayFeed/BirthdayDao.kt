@@ -19,9 +19,15 @@ interface BirthdayDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insert(birthdayList: BirthdayList): Long
 
-  @Query("Delete from BirthdayList where id is :itemId" )
-  fun delete(itemId:Long): Int
+  @Query("Delete from BirthdayList where id is :itemId")
+  fun delete(itemId: Long): Int
 
   @Query("Update BirthdayList set imagePath = :imagePath  where name is :name and dob is :dob ")
-  fun update(imagePath:String,name: String, dob: Date): Int
+  fun update(imagePath: String, name: String, dob: Date): Int
+
+  @Query("Update BirthdayList set remainderDate = :date  where name is :name and dob is :dob")
+  fun updateDate(date: Date,name:String,dob: Date): Int
+
+  @Query("Update BirthdayList set remainderTime = :time  where name is :name and dob is :dob")
+  fun updateTime(time: String,name:String,dob: Date): Int
 }

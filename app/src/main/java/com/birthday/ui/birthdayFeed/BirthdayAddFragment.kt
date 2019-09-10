@@ -90,7 +90,8 @@ class BirthdayAddFragment : DialogFragment()
         dob = SimpleDateFormat("dd/MM/yyyy").parse(dob_input.text.toString())
       }
       if (!profileName.isNullOrEmpty()  && dob != null) {
-        viewModel.saveContent(BirthdayList(name = profileName, dob = dob, imagePath = imagePath))
+        viewModel.saveContent(BirthdayList(name = profileName, dob = dob, imagePath = imagePath,
+          remainderDate = dob,remainderTime = PickerUtils.getTime(dob.hours,dob.minutes)))
       } else {
         dialog.dismiss()
         Toast.makeText(requireContext(),getString(R.string.notSaved),Toast.LENGTH_SHORT).show()
