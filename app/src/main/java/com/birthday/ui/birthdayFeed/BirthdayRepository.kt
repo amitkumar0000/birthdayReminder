@@ -5,9 +5,9 @@ import io.reactivex.Single
 import java.util.Date
 import javax.inject.Inject
 
-class BirthdayRepository @Inject constructor(val manager: BirthdayListManager) : DatabaseRepository {
+open class BirthdayRepository @Inject constructor(val manager: BirthdayListManager) : DatabaseRepository {
 
-  override fun getAllItem(): Single<List<BirthdayList>> {
+  override open fun getAllItem(): Single<List<BirthdayList>> {
     return manager.loadAllItem()
   }
 
