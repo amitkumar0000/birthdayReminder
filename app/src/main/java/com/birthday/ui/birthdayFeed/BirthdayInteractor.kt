@@ -21,17 +21,17 @@ open class BirthdayInteractor @Inject constructor(
     return birthdayRepository.deleteItem(id)
   }
 
-  fun updateContent(imagePath:String,name: String, dob: Date): Completable {
+  open fun updateContent(imagePath:String,name: String, dob: Date): Completable {
     return birthdayRepository.updateItem(imagePath,name,dob)
 
   }
 
-  fun updateRemainderTimeContent(date: Date,name:String,dob: Date): Completable {
+  open fun updateRemainderTimeContent(date: Date,name:String,dob: Date): Completable {
     return birthdayRepository.updateDateItem(date,name,dob)
 
   }
 
-  fun uodateNotificationTimeContent(time: String,name:String,dob: Date): Completable {
+  open fun updateNotificationTimeContent(time: String,name:String,dob: Date): Completable {
     return birthdayRepository.updateTimeItem(time,name,dob)
 
   }

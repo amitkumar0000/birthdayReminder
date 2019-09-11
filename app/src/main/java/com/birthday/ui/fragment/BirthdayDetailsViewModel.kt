@@ -3,13 +3,14 @@ package com.birthday.ui.fragment
 import androidx.lifecycle.ViewModel
 import com.birthday.ui.birthdayFeed.BirthdayDBUpdate
 import com.birthday.ui.birthdayFeed.BirthdayInteractor
+import com.birthday.ui.birthdayFeed.BirthdayListUpdate
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.util.Date
 
-class BirthdayDetailsViewModel(val birthdayInteractor: BirthdayInteractor) : ViewModel() {
+open class BirthdayDetailsViewModel(val birthdayInteractor: BirthdayInteractor) : ViewModel() {
 
   private val state by lazy { BehaviorSubject.create<BirthdayDBUpdate>() }
 
@@ -21,6 +22,7 @@ class BirthdayDetailsViewModel(val birthdayInteractor: BirthdayInteractor) : Vie
     birthdayInteractor.updateContent(imagePath,name,dob)
       .subscribeOn(Schedulers.computation())
       .subscribe {
+        state.onNext(BirthdayDBUpdate.updateSuccess)
         Timber.d("Update $imagePath with name $name and dob $dob is success")
       }
   }
@@ -29,15 +31,17 @@ class BirthdayDetailsViewModel(val birthdayInteractor: BirthdayInteractor) : Vie
     birthdayInteractor.updateRemainderTimeContent(date,name,dob)
       .subscribeOn(Schedulers.computation())
       .subscribe {
+        state.onNext(BirthdayDBUpdate.updateSuccess)
         Timber.d("updateRemainderTimeContent with $date is success")
       }
 
   }
 
   internal fun updateNotificationTimeContent(time: String,name:String,dob: Date) {
-    birthdayInteractor.uodateNotificationTimeContent(time,name,dob)
+    birthdayInteractor.updateNotificationTimeContent(time,name,dob)
       .subscribeOn(Schedulers.computation())
       .subscribe {
+        state.onNext(BirthdayDBUpdate.updateSuccess)
         Timber.d("Update updateNotificationTimeContent $time is success")
       }
   }

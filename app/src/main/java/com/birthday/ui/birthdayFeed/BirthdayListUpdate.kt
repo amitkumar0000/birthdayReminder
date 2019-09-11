@@ -10,4 +10,6 @@ sealed class BirthdayListUpdate {
 
 sealed class BirthdayDBUpdate{
   data class InsertSuccess(val item:BirthdayList) : BirthdayDBUpdate()
+  object updateSuccess : BirthdayDBUpdate()
+
 }
