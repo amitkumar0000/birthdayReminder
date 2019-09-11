@@ -1,11 +1,8 @@
 package com.birthday.ui.activity
 
-import android.view.Menu
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.test.InstrumentationRegistry
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -13,7 +10,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
 import com.birthday.ui.R
-import org.hamcrest.core.AllOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,6 +35,12 @@ class BirthDayActivityTest{
   }
 
   @Test
+  fun test_profile_imageInAddFragment(){
+    onView(withId(R.id.add)).perform(ViewActions.click())
+    onView(withId(R.id.profile_image)).check(matches(ViewMatchers.isDisplayed()))
+  }
+
+  @Test
   fun test_BirthdayTitleIsDisplayed(){
     onView(withId(R.id.birthdaytitle)).check(matches(ViewMatchers.isDisplayed()))
   }
@@ -57,4 +59,6 @@ class BirthDayActivityTest{
   fun test_Birthday_info_listDisplayed(){
     onView(withId(R.id.birthday_info_list)).check(matches(ViewMatchers.isDisplayed()))
   }
+
+
 }
