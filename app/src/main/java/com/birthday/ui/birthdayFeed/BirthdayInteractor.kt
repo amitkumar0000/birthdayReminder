@@ -9,17 +9,16 @@ open class BirthdayInteractor @Inject constructor(
   val birthdayRepository: BirthdayRepository
 ) {
 
-  fun feedContent(): Single<List<BirthdayList>> {
+  open fun feedContent(): Single<List<BirthdayList>> {
     return birthdayRepository.getAllItem()
   }
 
-  fun saveContent(info: BirthdayList) : Completable{
+  open fun saveContent(info: BirthdayList) : Completable{
      return birthdayRepository.insertItem(info)
   }
 
-  fun deleteId(id: Long): Completable {
+  open fun deleteId(id: Long): Completable {
     return birthdayRepository.deleteItem(id)
-
   }
 
   fun updateContent(imagePath:String,name: String, dob: Date): Completable {
