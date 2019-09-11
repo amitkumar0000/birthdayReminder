@@ -2,7 +2,7 @@ package com.birthday.ui.fragment
 
 import com.birthday.ui.birthdayFeed.BirthdayDBUpdate
 import com.birthday.ui.birthdayFeed.BirthdayInteractor
-import com.birthday.ui.birthdayFeed.TestUtils
+import com.birthday.TestUtils
 import com.demo.testing.rxjavaschedulers.RxSchedulerOverrides
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable

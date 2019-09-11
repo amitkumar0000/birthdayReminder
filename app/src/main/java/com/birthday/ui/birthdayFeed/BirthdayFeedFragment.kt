@@ -210,7 +210,7 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     )
     val remainingDay = getString(R.string.remainingday, DateUtils.getRemainingDays(dob, Calendar.getInstance().time))
     return BirthdayInfoModel(
-      id =it.id,
+      id = it.id,
       imagePath = imagePath,
       profileName = profileName,
       profileDetail = profileDetail,
@@ -221,7 +221,6 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
       launchFunction = ::bdpLauncher
     )
   }
-
 
   private fun requestContent() {
     viewModel.loadContent()
@@ -250,11 +249,12 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
     }
   }
 
-  private fun bdpLauncher(imagePath: String,
+  private fun bdpLauncher(
+    imagePath: String,
     name: String, details: String,
     dob: Date,
-    remainderDate:Date,
-    remainderTime:String
+    remainderDate: Date,
+    remainderTime: String
 
   ) {
     val fragment = BirthdayDetailsFragment.newInstance()
@@ -278,17 +278,21 @@ class BirthdayFeedFragment : BaseNavigationFragment() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.add -> {
-        val birthdayAddFragment = BirthdayAddFragment()
-        val ft = fragmentManager?.beginTransaction()
-        ft?.addToBackStack(null)
-        birthdayAddFragment.setTargetFragment(this, DIALOG_PICKER);
-        birthdayAddFragment.show(ft, null)
+        setFragment()
         Log.d("TAG", " Add menu Item clikced")
         return true
       }
       else ->
         super.onOptionsItemSelected(item)
     }
+  }
+
+  fun setFragment() {
+    val birthdayAddFragment = BirthdayAddFragment()
+    val ft = fragmentManager?.beginTransaction()
+    ft?.addToBackStack(null)
+    birthdayAddFragment.setTargetFragment(this, DIALOG_PICKER);
+    birthdayAddFragment.show(ft, null)
   }
 
   companion object {

@@ -1,6 +1,7 @@
 package com.birthday.ui.birthdayFeed
 
-import com.birthday.ui.birthdayFeed.TestUtils.getBirthdayList
+import com.birthday.TestUtils
+import com.birthday.TestUtils.getBirthdayList
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Maybe
 import io.reactivex.observers.TestObserver

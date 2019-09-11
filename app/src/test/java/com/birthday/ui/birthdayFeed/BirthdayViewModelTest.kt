@@ -1,6 +1,6 @@
 package com.birthday.ui.birthdayFeed
 
-import com.birthday.ui.birthdayFeed.TestUtils.getBirthdayList
+import com.birthday.TestUtils.getBirthdayList
 import com.demo.testing.rxjavaschedulers.RxSchedulerOverrides
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable

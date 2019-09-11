@@ -1,13 +1,13 @@
 package com.birthday.ui.birthdayFeed
 
-import com.birthday.ui.birthdayFeed.TestUtils.getBirthdayList
+import com.birthday.TestUtils
+import com.birthday.TestUtils.getBirthdayList
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.Single
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-import java.util.Calendar
 
 class BirthdayInteractorTest{
 

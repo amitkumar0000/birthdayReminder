@@ -1,7 +1,7 @@
-package com.birthday.ui.birthdayFeed
+package com.birthday
 
+import com.birthday.ui.birthdayFeed.BirthdayList
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
