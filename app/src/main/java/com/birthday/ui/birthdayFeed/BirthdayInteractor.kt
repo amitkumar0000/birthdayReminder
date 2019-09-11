@@ -5,7 +5,7 @@ import io.reactivex.Single
 import java.util.Date
 import javax.inject.Inject
 
-class BirthdayInteractor @Inject constructor(
+open class BirthdayInteractor @Inject constructor(
   val birthdayRepository: BirthdayRepository
 ) {
 

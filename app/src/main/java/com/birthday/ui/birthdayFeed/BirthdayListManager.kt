@@ -29,6 +29,5 @@ open class BirthdayListManager(val dao: BirthdayDao) {
 
   open fun updateTimeItem(time: String,name:String,dob: Date): Int {
     return dao.updateTime(time,name,dob)
-
   }
 }

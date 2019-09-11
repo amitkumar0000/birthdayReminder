@@ -6,6 +6,7 @@ import org.junit.runner.RunWith
 import androidx.test.runner.AndroidJUnit4
 import io.reactivex.Completable
 import io.reactivex.observers.TestObserver
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.text.SimpleDateFormat
@@ -126,5 +127,11 @@ class BirthdayDatabaseTest {
       remainderTime = "10:00 PM",
       remainderDate = Calendar.getInstance().time
     )
+  }
+
+  @After
+  @Throws(java.lang.Exception::class)
+  fun close(){
+    db.close()
   }
 }

@@ -1,5 +1,6 @@
 package com.birthday.ui.birthdayFeed
 
+import com.birthday.ui.birthdayFeed.TestUtils.getBirthdayList
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -97,13 +98,4 @@ class BirthdayRepositoryTest {
     testObserver.assertComplete()
   }
 
-  private fun getBirthdayList(): BirthdayList {
-    return BirthdayList(
-      name = "Android Testing",
-      dob = Calendar.getInstance().time,
-      imagePath = "/dev/adb/image111/png",
-      remainderTime = "10:00 PM",
-      remainderDate = Calendar.getInstance().time
-    )
-  }
 }
