@@ -21,11 +21,15 @@ class BirthdayStorageModule {
     return Room.databaseBuilder(application, BirthdayDatabase::class.java, "database").fallbackToDestructiveMigration().build()
   }
 
+  @Singleton
+  @Provides
+  fun providesBirthdayDao(database: BirthdayDatabase)=database.birthdayDao()
+
 
   @Singleton
   @Provides
-  fun providesBirthdayListManager(database: BirthdayDatabase): BirthdayListManager{
-    return BirthdayListManager(database)
+  fun providesBirthdayListManager(dao: BirthdayDao): BirthdayListManager{
+    return BirthdayListManager(dao)
   }
 
   @Singleton
